@@ -11,13 +11,13 @@ const Hero: React.FC = () => (
         className="w-44 h-44 rounded-full object-cover border-4 border-white shadow mb-6 md:mb-0"
       />
       <div className="flex-1 flex flex-col items-center md:items-start">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2">Anna Winnick</h1> {/* TODO: Replace with your name */}
-        <p className="text-lg text-blue-700 font-medium mb-2">Platform Engineer @ Acme Corp</p> {/* TODO: Replace with your current role */}
+        <h1 className="text-4xl text-accentOffWhite font-extrabold tracking-tight mb-2">Anna Winnick</h1> {/* TODO: Replace with your name */}
+        <p className="text-lg text-accentPink font-medium mb-2">Software Engineer @ Hiya</p> {/* TODO: Replace with your current role */}
         <div className="flex gap-4 mb-4">
           <a
             href="/resume.pdf"
             download
-            className="text-blue-700 hover:text-blue-900 text-2xl"
+            className="text-accentBlue hover:text-accentYellow text-2xl"
             title="Download Resume"
           >
             <FaFilePdf />
@@ -26,13 +26,13 @@ const Hero: React.FC = () => (
             href="https://linkedin.com/in/your-linkedin" // TODO: Replace with your LinkedIn
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-700 hover:text-blue-900 text-2xl"
+            className="text-accentBlue hover:text-accentYellow text-2xl"
             title="LinkedIn"
           >
             <FaLinkedin />
           </a>
         </div>
-        <p className="text-neutral-700 max-w-xl mb-0">Building reliable platforms and delightful UIs. Junior software engineer with a passion for frontend and developer experience.</p> {/* TODO: Update tagline/summary */}
+        <p className="text-neutral-700 max-w-xl mb-0">Writing clean, clever code and learning from leaders before me.</p> {/* TODO: Update tagline/summary */}
       </div>
     </div>
   </SectionWrapper>

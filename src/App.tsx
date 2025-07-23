@@ -13,11 +13,21 @@ function App() {
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 pb-16">
         <Hero />
-        <FavoriteTools />
+        <div className="flex flex-col md:flex-row gap-6 my-8">
+          <div className="flex-1 min-w-0 flex flex-col">
+            <div className="h-full min-h-[340px] max-h-[420px] flex flex-col">
+              <FavoriteTools forceColumn />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0 flex flex-col">
+            <div className="h-full min-h-[340px] max-h-[420px] flex flex-col overflow-y-auto">
+              <Notes />
+            </div>
+          </div>
+        </div>
         <WorkHighlights />
         <Bookshelf />
         <Toolbox />
-        <Notes />
         <Contact />
       </main>
     </div>

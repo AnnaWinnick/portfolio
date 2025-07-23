@@ -10,36 +10,36 @@ type BookItemProps = {
 };
 
 const BookItem: React.FC<BookItemProps> = ({ title, cover, rating, inProgress, onClick }) => (
-  <div className="flex flex-col items-center w-32 mx-2 relative">
+  <div className="flex flex-col items-center w-32 mx-2 relative h-64">
+    {/* inProgress pill above the image, absolutely positioned */}
+    {inProgress && (
+      <span className="absolute left-1/2 -translate-x-1/2 z-20 px-2 py-1 bg-accentBlue text-[8px] font-bold rounded shadow whitespace-nowrap">
+        Reading now!
+      </span>
+    )}
     <button
       onClick={onClick}
-      className="focus:outline-none"
+      className="focus:outline-none z-10 mt-4"
       aria-label={`Open review for ${title}`}
+      style={{ background: 'transparent' }}
     >
       <img
         src={cover}
         alt={title}
-        className="w-28 h-40 object-cover rounded shadow border border-neutral-200"
+        className="w-28 h-40 object-cover rounded shadow border border-neutral-200 relative"
       />
-      {inProgress && (
-        <span className="absolute top-2 left-2 bg-yellow-400 text-xs font-bold px-2 py-0.5 rounded shadow">
-          In Progress
-        </span>
-      )}
     </button>
-    <div className="mt-2 text-center">
-      <div className="font-medium text-sm break-words whitespace-normal" title={title}>{title}</div>
+    <div className="mt-2 text-center z-10 flex flex-col items-center w-full">
       <div className="flex justify-center mt-1">
         {[1,2,3,4,5].map((i) => (
           <FaStar
             key={i}
-            className={
-              i <= rating ? 'text-yellow-400' : 'text-neutral-200'
-            }
+            className={i <= rating ? 'text-accentYellow' : 'text-neutral-200'}
             aria-hidden="true"
           />
         ))}
       </div>
+      <div className="font-medium text-xs break-words whitespace-normal" title={title}>{title}</div>
     </div>
   </div>
 );

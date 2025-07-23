@@ -24,7 +24,7 @@ const favoriteTools = [
 ];
 
 const FavoriteTools: React.FC = () => (
-  <SectionWrapper id="favorite-tools" title="Favorite Tools Right Now" className="bg-blue-50 rounded-xl mt-8">
+  <SectionWrapper id="favorite-tools" title="My Current Go-Tos:" className="bg-accentBlue">
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       {favoriteTools.map((tool) => (
         <ToolboxItem key={tool.name} {...tool} />

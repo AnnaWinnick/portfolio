@@ -52,7 +52,7 @@ const bookshelf = [
 const Bookshelf: React.FC = () => {
   const [modalIdx, setModalIdx] = useState<number | null>(null);
   return (
-    <SectionWrapper id="bookshelf" title="Bookshelf">
+    <SectionWrapper id="bookshelf" title="Bookshelf" className='bg-accentPink'>
       <div className="overflow-x-auto pb-2">
         <div className="flex flex-row gap-4 min-w-full">
           {bookshelf.map((item, idx) => (

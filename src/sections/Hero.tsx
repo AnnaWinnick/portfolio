@@ -3,7 +3,7 @@ import React from 'react';
 import { FaLinkedin, FaFilePdf } from 'react-icons/fa';
 
 const Hero: React.FC = () => (
-  <SectionWrapper id="hero">
+  <SectionWrapper id="hero" className="bg-accentOrange">
     <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left py-16 gap-8">
       <img
         src="https://placehold.co/180x180?text=Photo" // TODO: Replace with your photo

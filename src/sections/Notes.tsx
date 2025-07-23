@@ -15,7 +15,7 @@ const notes = [
 ];
 
 const Notes: React.FC = () => (
-  <SectionWrapper id="notes" title="Notes">
+  <SectionWrapper id="notes" title="Notes" className='bg-accentOffWhite'>
     <div>
       {notes.map((note, i) => (
         <Note key={i} {...note} />

@@ -19,7 +19,7 @@ const projects = [
 ];
 
 const WorkHighlights: React.FC = () => (
-  <SectionWrapper id="work" title="Work Highlights">
+  <SectionWrapper id="work" title="Work Highlights" className='bg-accentYellow'>
     <div>
       {projects.map((p) => (
         <ProjectCard key={p.title} {...p} />

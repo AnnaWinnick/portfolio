@@ -32,7 +32,7 @@ const toolbox = [
 ];
 
 const Toolbox: React.FC = () => (
-  <SectionWrapper id="toolbox" title="Toolbox">
+  <SectionWrapper id="toolbox" title="Toolbox" className='bg-accentOlive'>
     <div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
     >

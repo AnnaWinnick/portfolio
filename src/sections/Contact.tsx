@@ -3,7 +3,7 @@ import ContactForm from '../components/ContactForm';
 import React from 'react';
 
 const Contact: React.FC = () => (
-  <SectionWrapper id="resume" title="Resume & Contact">
+  <SectionWrapper id="contact" title="Contact" className='bg-accentBlue'>
     <div className="space-y-4">
       <ContactForm />
     </div>

@@ -1,14 +1,5 @@
 import React from 'react';
 
-const accentColorClasses = [
-  'bg-accentYellow',
-  'bg-accentBlue',
-  'bg-accentOffWhite',
-  'bg-accentPink',
-  'bg-accentOrange',
-  'bg-accentOlive',
-];
-
 type SectionWrapperProps = {
   id: string;
   title?: string;

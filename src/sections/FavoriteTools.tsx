@@ -4,8 +4,6 @@ import React from 'react';
 import { SiOpenai } from 'react-icons/si';
 import { FaGithub, FaMagic } from 'react-icons/fa';
 
-type FavoriteToolsProps = { forceColumn?: boolean };
-
 const favoriteTools = [
   {
     name: 'ChatGPT',
@@ -25,9 +23,9 @@ const favoriteTools = [
   // TODO: Add/remove favorite tools
 ];
 
-const FavoriteTools: React.FC<FavoriteToolsProps> = ({ forceColumn }) => (
+const FavoriteTools: React.FC = () => (
   <SectionWrapper id="favorite-tools" title="My Current Go-Tos:" className="bg-accentBlue">
-    <div className={forceColumn ? 'grid grid-cols-1 gap-6' : 'grid grid-cols-1 sm:grid-cols-2 gap-6'}>
+    <div className={'grid grid-cols-1 gap-6'}>
       {favoriteTools.map((tool) => (
         <ToolboxItem key={tool.name} {...tool} />
       ))}

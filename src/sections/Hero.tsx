@@ -6,13 +6,13 @@ const Hero: React.FC = () => (
   <SectionWrapper id="hero" className="bg-accentOrange">
     <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left py-16 gap-8">
       <img
-        src="https://placehold.co/180x180?text=Photo" // TODO: Replace with your photo
+        src="../../public/gradPhoto.jpeg" // TODO: Replace with your photo
         alt="Profile"
         className="w-44 h-44 rounded-full object-cover border-4 border-white shadow mb-6 md:mb-0"
       />
       <div className="flex-1 flex flex-col items-center md:items-start">
         <h1 className="text-4xl text-accentOffWhite font-extrabold tracking-tight mb-2">Anna Winnick</h1> {/* TODO: Replace with your name */}
-        <p className="text-lg text-accentPink font-medium mb-2">Software Engineer @ Hiya</p> {/* TODO: Replace with your current role */}
+        <p className="text-lg text-accentPink font-medium mb-2 flex items-center">Software Engineer @ <a href='https://www.hiya.com/' target='_blank'><img src='../../public/hiyaLogo.svg' className='h-6 px-2'/></a></p>
         <div className="flex gap-4 mb-4">
           <a
             href="/resume.pdf"
@@ -23,7 +23,7 @@ const Hero: React.FC = () => (
             <FaFilePdf />
           </a>
           <a
-            href="https://linkedin.com/in/your-linkedin" // TODO: Replace with your LinkedIn
+            href="https://linkedin.com/in/anna-winnick"
             target="_blank"
             rel="noopener noreferrer"
             className="text-accentBlue hover:text-accentYellow text-2xl"

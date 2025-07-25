@@ -10,10 +10,10 @@ type BookItemProps = {
 };
 
 const BookItem: React.FC<BookItemProps> = ({ title, cover, rating, inProgress, onClick }) => (
-  <div className="flex flex-col items-center w-32 mx-2 relative h-64">
+  <div className="flex flex-col items-center mx-2 relative h-64">
     {/* inProgress pill above the image, absolutely positioned */}
     {inProgress && (
-      <span className="absolute left-1/2 -translate-x-1/2 z-20 px-2 py-1 bg-accentBlue text-[8px] font-bold rounded shadow whitespace-nowrap">
+      <span className="absolute left-1/2 -translate-x-1/2 z-20 px-2 py-1 bg-accentBlue text-[8px] font-bold rounded-button shadow whitespace-nowrap">
         Reading now!
       </span>
     )}
@@ -26,11 +26,11 @@ const BookItem: React.FC<BookItemProps> = ({ title, cover, rating, inProgress, o
       <img
         src={cover}
         alt={title}
-        className="w-28 h-40 object-cover rounded shadow border border-neutral-200 relative"
+        className="object-cover rounded shadow border border-neutral-200 relative h50"
       />
     </button>
     <div className="mt-2 text-center z-10 flex flex-col items-center w-full">
-      <div className="flex justify-center mt-1">
+      {!inProgress && <div className="flex justify-center mt-1">
         {[1,2,3,4,5].map((i) => (
           <FaStar
             key={i}
@@ -38,7 +38,7 @@ const BookItem: React.FC<BookItemProps> = ({ title, cover, rating, inProgress, o
             aria-hidden="true"
           />
         ))}
-      </div>
+      </div> }
       <div className="font-medium text-xs break-words whitespace-normal" title={title}>{title}</div>
     </div>
   </div>

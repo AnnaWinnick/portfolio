@@ -5,11 +5,11 @@ import React, { useState } from 'react';
 
 const bookshelf = [
   {
-    title: 'Designing Data-Intensive Applications',
-    cover: 'https://covers.openlibrary.org/b/id/8231996-L.jpg', // TODO: Replace with your own image
-    rating: 5,
-    inProgress: false,
-    review: 'A must-read for backend and platform engineers. Key takeaways: scalability, reliability, and maintainability. // TODO: Add your own review',
+    title: 'AI Engineering',
+    cover: 'https://covers.openlibrary.org/b/id/15091156-L.jpg', // TODO: Replace with your own image
+    rating: 0,
+    inProgress: true,
+    review: '🔧 Still working on it...',
   },
   {
     title: 'Refactoring UI',

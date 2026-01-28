@@ -9,6 +9,7 @@ interface GoodreadsBook {
   rating?: number;
   goodreadsUrl: string;
   coverUrl?: string;
+  startedAt?: string;
 }
 
 export async function getBooks(): Promise<GoodreadsBook[]> {
@@ -80,6 +81,8 @@ function parseGoodreadsRSS(xml: string): Omit<GoodreadsBook, "status">[] {
   const largeImageRegex = /<book_large_image_url>(<!\[CDATA\[.*?\]\]>|[^<]*)<\/book_large_image_url>/;
   const mediumImageRegex = /<book_medium_image_url>(<!\[CDATA\[.*?\]\]>|[^<]*)<\/book_medium_image_url>/;
   const smallImageRegex = /<book_small_image_url>(<!\[CDATA\[.*?\]\]>|[^<]*)<\/book_small_image_url>/;
+  // Date when book was added to shelf (start date for currently-reading)
+  const dateAddedRegex = /<user_date_added>(<!\[CDATA\[.*?\]\]>|[^<]*)<\/user_date_added>/;
 
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
@@ -92,6 +95,7 @@ function parseGoodreadsRSS(xml: string): Omit<GoodreadsBook, "status">[] {
     const largeImageMatch = largeImageRegex.exec(item);
     const mediumImageMatch = mediumImageRegex.exec(item);
     const smallImageMatch = smallImageRegex.exec(item);
+    const dateAddedMatch = dateAddedRegex.exec(item);
 
     if (titleMatch && linkMatch) {
       // Try large, then medium, then small image
@@ -99,12 +103,23 @@ function parseGoodreadsRSS(xml: string): Omit<GoodreadsBook, "status">[] {
         || extractContent(mediumImageMatch?.[1])
         || extractContent(smallImageMatch?.[1]);
 
+      // Parse date added (format: "Sat, 25 Jan 2025 12:34:56 -0800")
+      const dateAddedRaw = extractContent(dateAddedMatch?.[1]);
+      let startedAt: string | undefined;
+      if (dateAddedRaw) {
+        const date = new Date(dateAddedRaw);
+        if (!isNaN(date.getTime())) {
+          startedAt = date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        }
+      }
+
       books.push({
         title: extractContent(titleMatch[1]) || "Untitled",
         author: extractContent(authorMatch?.[1]) || "Unknown Author",
         goodreadsUrl: extractContent(linkMatch[1]) || "",
         rating: ratingMatch ? parseInt(ratingMatch[1]) : undefined,
         coverUrl,
+        startedAt,
       });
     }
   }

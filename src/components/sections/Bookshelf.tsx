@@ -21,7 +21,7 @@ export async function Bookshelf() {
               <span className="font-mono text-xs sm:text-sm text-[var(--foreground-dark-muted)] uppercase tracking-wider mb-4 block">
                 via Goodreads
               </span>
-              <h2 className="display-lg text-[var(--foreground-dark)]">Bookshelf</h2>
+              <h2 className="display-sm text-[var(--foreground-dark)]">Bookshelf</h2>
               <p className="body-lg text-[var(--foreground-dark-muted)] mt-4 max-w-2xl">
                 What I&apos;m reading and recently finished.
               </p>

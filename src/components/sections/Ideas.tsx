@@ -15,7 +15,7 @@ export async function Ideas() {
         <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mb-2 block">
           What I&apos;m thinking about
         </span>
-        <h2 className="display-md text-[var(--foreground)]">Ideas</h2>
+        <h2 className="display-sm text-[var(--foreground)]">Ideas</h2>
       </div>
 
       {/* Ideas list */}

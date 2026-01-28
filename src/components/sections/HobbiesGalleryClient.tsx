@@ -69,7 +69,7 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
           <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mb-1 block">
             Outside of work
           </span>
-          <h2 className="display-md">Creative Hobbies</h2>
+          <h2 className="display-sm">Creative Hobbies</h2>
         </div>
 
         {/* Horizontal scroll wrapper */}

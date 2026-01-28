@@ -16,7 +16,7 @@ export async function HobbiesGallery() {
               <span className="font-mono text-xs sm:text-sm text-[var(--foreground-muted)] uppercase tracking-wider mb-4 block">
                 Outside of work
               </span>
-              <h2 className="display-lg text-[var(--foreground)]">
+              <h2 className="display-sm text-[var(--foreground)]">
                 Creative Hobbies
               </h2>
               <p className="body-lg text-[var(--foreground-muted)] mt-4 max-w-2xl">

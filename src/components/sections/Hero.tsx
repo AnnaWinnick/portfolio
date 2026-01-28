@@ -15,17 +15,12 @@ function usePrefersReducedMotion() {
 
 interface HeroProps {
   name?: string;
-  role?: string;
-  tagline?: string;
   email?: string;
-  resumeUrl?: string;
   imageUrl?: string;
 }
 
 export function Hero({
   name = "Anna Winnick",
-  role = "Creative DevOps Engineer",
-  tagline = "Painting, crocheting, and shipping infrastructure with equal enthusiasm.",
   email = "anna@example.com",
   imageUrl,
 }: HeroProps) {
@@ -35,7 +30,6 @@ export function Hero({
 
   const nameRef = useRef<HTMLHeadingElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
-  const taglineRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const shapeRef1 = useRef<HTMLDivElement>(null);
   const shapeRef2 = useRef<HTMLDivElement>(null);
@@ -71,7 +65,7 @@ export function Hero({
         const letters = nameRef.current.querySelectorAll(".letter");
         gsap.set(letters, { opacity: 1, y: 0 });
       }
-      gsap.set([roleRef.current, taglineRef.current, ctaRef.current], { opacity: 1, y: 0 });
+      gsap.set([roleRef.current, ctaRef.current], { opacity: 1, y: 0 });
       if (photoRef.current) gsap.set(photoRef.current, { opacity: 1 });
       return;
     }
@@ -100,7 +94,7 @@ export function Hero({
         }, "-=1.2");
       }
 
-      // Animate role
+      // Animate description
       tl.from(
         roleRef.current,
         {
@@ -109,17 +103,6 @@ export function Hero({
           duration: 0.8,
         },
         "-=0.6"
-      );
-
-      // Animate tagline
-      tl.from(
-        taglineRef.current,
-        {
-          y: 30,
-          opacity: 0,
-          duration: 0.8,
-        },
-        "-=0.5"
       );
 
       // Animate CTAs
@@ -198,11 +181,6 @@ export function Hero({
       {char === " " ? "\u00A0" : char}
     </span>
   ));
-
-  const scrollToIdeas = () => {
-    const ideas = document.querySelector("#ideas");
-    ideas?.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <section
@@ -314,7 +292,7 @@ export function Hero({
                       value={visitorName}
                       onChange={(e) => setVisitorName(e.target.value)}
                       placeholder="you"
-                      className="hero-name-input bg-transparent border-b-2 border-[var(--accent-primary)]/50 focus:border-[var(--accent-primary)] outline-none w-28 sm:w-40 lg:w-48 text-[var(--accent-primary)]"
+                      className="hero-name-input bg-transparent border-b-2 border-[var(--accent-primary)]/50 focus:border-[var(--accent-primary)]/50 outline-none focus:outline-none focus:ring-0 w-28 sm:w-40 lg:w-48 text-[var(--accent-primary)]"
                       style={{
                         fontFamily: "var(--font-mono), monospace",
                         fontSize: "inherit",
@@ -324,11 +302,11 @@ export function Hero({
                     <button
                       type="submit"
                       disabled={!visitorName.trim() || isSubmitting}
-                      className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-[var(--foreground-muted)] hover:text-[var(--accent-primary)] disabled:opacity-50 transition-colors mt-1"
+                      className="inline-flex items-center gap-1 text-xs sm:text-sm text-[var(--foreground-muted)] hover:text-[var(--accent-primary)] disabled:opacity-50 transition-colors"
                       style={{ fontFamily: "inherit" }}
                     >
                       <span>tell me you&apos;re here</span>
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                       </svg>
                     </button>
@@ -340,76 +318,34 @@ export function Hero({
             )}
           </div>
 
-          {/* Role */}
+          {/* Description */}
           <p
             ref={roleRef}
-            className="font-mono text-xl sm:text-2xl text-[var(--accent-secondary)] mb-8"
+            className="text-lg sm:text-xl text-[var(--foreground-muted)] max-w-2xl mb-6"
           >
-            {role}
+            A <span className="text-[var(--accent-secondary)] font-medium">Creative DevOps Engineer</span> who is{" "}
+            <a href="#hobbies" className="text-[var(--foreground)] underline decoration-[var(--accent-primary)]/50 hover:decoration-[var(--accent-primary)] transition-colors">painting</a>,{" "}
+            <a href="#hobbies" className="text-[var(--foreground)] underline decoration-[var(--accent-primary)]/50 hover:decoration-[var(--accent-primary)] transition-colors">crocheting</a>, and shipping infrastructure with equal enthusiasm.
           </p>
 
-          {/* Tagline */}
-          <p
-            ref={taglineRef}
-            className="body-lg text-[var(--foreground-muted)] max-w-lg mb-8"
-          >
-            {tagline}
+          {/* Tech stack */}
+          <p className="text-sm font-mono text-[var(--foreground-muted)]/70 mb-8">
+            Built with Next.js, TypeScript, Prisma. Self-hosted with Docker with help from Claude Code.
           </p>
 
-          {/* Tech stack badges */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            {["Next.js", "TypeScript", "Prisma", "Docker"].map((tech) => (
-              <span
-                key={tech}
-                className="px-3 py-1 text-xs font-mono bg-[var(--foreground)]/5 text-[var(--foreground-muted)] rounded-full border border-[var(--foreground)]/10"
-              >
-                {tech}
-              </span>
-            ))}
-            <span className="px-3 py-1 text-xs font-mono text-[var(--foreground-muted)]/60">
-              self-hosted
-            </span>
-          </div>
-
-          {/* CTAs */}
-          <div ref={ctaRef} className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
-            <button
-              onClick={scrollToIdeas}
-              className="px-6 sm:px-8 py-3 sm:py-4 bg-[var(--accent-primary)] text-white text-base sm:text-lg font-medium hover-lift hover-glow rounded-lg"
-            >
-              Explore my work
-            </button>
+          {/* CTA */}
+          <div ref={ctaRef}>
             <a
               href={`mailto:${email}`}
-              className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-[var(--foreground)] text-base sm:text-lg font-medium btn-fill rounded-lg text-center"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-[var(--accent-primary)] font-mono text-sm sm:text-base tracking-wide hover-lift hover-glow rounded-lg"
+              style={{ color: "white" }}
             >
-              Get in touch
+              Get in touch 💌
             </a>
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator - hidden on mobile */}
-      <button
-        onClick={scrollToIdeas}
-        className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-[var(--foreground-muted)] hover:text-[var(--foreground)] transition-colors"
-        aria-label="Scroll to content"
-      >
-        <span className="font-mono text-xs uppercase tracking-wider">Scroll</span>
-        <svg
-          className="w-6 h-6 animate-bounce"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-          />
-        </svg>
-      </button>
     </section>
   );
 }

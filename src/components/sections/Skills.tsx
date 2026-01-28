@@ -15,7 +15,7 @@ export async function Skills() {
         <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mb-2 block">
           Accountability tracker
         </span>
-        <h2 className="display-md text-[var(--foreground)]">
+        <h2 className="display-sm text-[var(--foreground)]">
           Skills I&apos;m Growing
         </h2>
       </div>

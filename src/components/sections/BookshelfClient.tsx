@@ -13,6 +13,7 @@ interface Book {
   goodreadsUrl: string;
   status: "reading" | "finished";
   rating?: number;
+  startedAt?: string;
 }
 
 interface BookshelfClientProps {
@@ -41,13 +42,11 @@ function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "xs
 function BookCard({
   book,
   index,
-  size = "large",
 }: {
   book: Book;
   index: number;
-  size?: "large" | "small";
 }) {
-  const ref = useRef<HTMLAnchorElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -95,54 +94,51 @@ function BookCard({
     return () => ctx.revert();
   }, [index]);
 
-  const sizeClasses =
-    size === "large"
-      ? "w-24 sm:w-32 h-36 sm:h-48"
-      : "w-20 sm:w-24 h-28 sm:h-36";
-
   return (
-    <a
+    <div
       ref={ref}
-      href={book.goodreadsUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex-shrink-0 group block ${sizeClasses} relative`}
+      className="flex-shrink-0 group flex flex-col items-center"
       style={{ opacity: 0 }}
     >
-      {book.coverUrl ? (
-        <img
-          src={book.coverUrl}
-          alt={book.title}
-          loading="lazy"
-          className="w-full h-full object-cover rounded-sm shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:-translate-y-2"
-        />
-      ) : (
-        <div className="w-full h-full bg-gradient-to-br from-[var(--accent-primary)]/20 to-[var(--accent-secondary)]/20 flex items-center justify-center rounded-sm border border-[var(--foreground-dark)]/20">
-          <span className="text-xs text-[var(--foreground-dark-muted)] text-center px-2 line-clamp-3">
-            {book.title}
-          </span>
-        </div>
-      )}
-
-      {/* Hover overlay with book info */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent rounded-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
-        <p className="text-white text-sm font-medium line-clamp-2 mb-1">
-          {book.title}
-        </p>
-        <p className="text-white/70 text-xs line-clamp-1">{book.author}</p>
-        {book.rating && book.rating > 0 && (
-          <div className="mt-1.5">
-            <StarRating rating={book.rating} size="xs" />
+      {/* Book cover */}
+      <a
+        href={book.goodreadsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block w-auto h-32 sm:h-40 aspect-[2/3] relative transition-transform duration-300 group-hover:-translate-y-3"
+      >
+        {book.coverUrl ? (
+          <img
+            src={book.coverUrl}
+            alt={book.title}
+            loading="lazy"
+            className="w-full h-full object-cover rounded-sm shadow-lg group-hover:shadow-2xl transition-shadow duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[var(--accent-primary)]/20 to-[var(--accent-secondary)]/20 flex items-center justify-center rounded-sm border border-[var(--foreground-dark)]/20">
+            <span className="text-xs text-[var(--foreground-dark-muted)] text-center px-2 line-clamp-3">
+              {book.title}
+            </span>
           </div>
         )}
-        <span className="inline-flex items-center gap-1 mt-2 text-xs text-[var(--accent-secondary)]">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-          Goodreads
-        </span>
-      </div>
-    </a>
+      </a>
+
+      {/* Star rating or start date - shows underneath on hover */}
+      {book.status === "reading" && book.startedAt ? (
+        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center">
+          <span className="block text-[10px] text-[var(--foreground-dark-muted)] font-mono uppercase tracking-wider">
+            Started
+          </span>
+          <span className="block text-xs text-[var(--foreground-dark-muted)] font-mono">
+            {book.startedAt}
+          </span>
+        </div>
+      ) : book.rating && book.rating > 0 ? (
+        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <StarRating rating={book.rating} size="xs" />
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -182,55 +178,58 @@ export function BookshelfClient({
   }, []);
 
   return (
-    <div className="py-10 sm:py-12">
+    <div className="py-12 sm:py-16">
       <div className="container-wide">
         {/* Section header */}
         <div ref={headerRef} className="mb-6 sm:mb-8" style={{ opacity: 0 }}>
           <span className="font-mono text-xs text-[var(--foreground-dark-muted)] uppercase tracking-wider mb-2 block">
             via Goodreads
           </span>
-          <h2 className="display-md text-[var(--foreground-dark)]">Bookshelf</h2>
+          <h2 className="display-sm text-[var(--foreground-dark)]">Bookshelf</h2>
         </div>
 
-        {/* Currently Reading */}
-        {currentlyReading.length > 0 && (
-          <div className="mb-6 sm:mb-8">
-            <h3 className="font-mono text-xs text-[var(--accent-primary)] uppercase tracking-wider mb-4">
-              Currently Reading
-            </h3>
-            <div className="flex flex-wrap gap-3 sm:gap-4 items-end">
-              {currentlyReading.map((book, i) => (
-                <BookCard
-                  key={book.goodreadsUrl}
-                  book={book}
-                  index={i}
-                  size="large"
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Recently Finished - Horizontal scroll on mobile */}
-        {finished.length > 0 && (
-          <div>
-            <h3 className="font-mono text-xs text-[var(--accent-secondary)] uppercase tracking-wider mb-4">
-              Recently Finished
-            </h3>
-            <div className="overflow-x-auto -mx-[var(--grid-gutter)] px-[var(--grid-gutter)] sm:overflow-visible sm:mx-0 sm:px-0">
-              <div className="flex gap-3 sm:gap-4 sm:flex-wrap items-end min-w-max sm:min-w-0">
-                {finished.map((book, i) => (
-                  <BookCard
-                    key={book.goodreadsUrl}
-                    book={book}
-                    index={i + currentlyReading.length}
-                    size="small"
-                  />
-                ))}
+        {/* Side by side sections */}
+        <div className="grid gap-8 lg:grid-cols-2">
+          {/* Currently Reading */}
+          {currentlyReading.length > 0 && (
+            <div>
+              <h3 className="font-mono text-xs text-[var(--accent-primary)] uppercase tracking-wider mb-4">
+                Currently Reading
+              </h3>
+              <div className="overflow-x-auto overflow-y-visible -mx-[var(--grid-gutter)] px-[var(--grid-gutter)] pb-6">
+                <div className="flex gap-4 items-end min-w-max" style={{ minHeight: "14rem" }}>
+                  {currentlyReading.map((book, i) => (
+                    <BookCard
+                      key={book.goodreadsUrl}
+                      book={book}
+                      index={i}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Recently Finished */}
+          {finished.length > 0 && (
+            <div>
+              <h3 className="font-mono text-xs text-[var(--accent-secondary)] uppercase tracking-wider mb-4">
+                Recently Finished
+              </h3>
+              <div className="overflow-x-auto overflow-y-visible -mx-[var(--grid-gutter)] px-[var(--grid-gutter)] pb-6">
+                <div className="flex gap-4 items-end min-w-max" style={{ minHeight: "14rem" }}>
+                  {finished.map((book, i) => (
+                    <BookCard
+                      key={book.goodreadsUrl}
+                      book={book}
+                      index={i + currentlyReading.length}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Goodreads link */}
         <div className="mt-6 sm:mt-8">

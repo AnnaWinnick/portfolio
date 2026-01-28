@@ -29,7 +29,7 @@ export default function Home() {
       </nav>
 
       {/* Ideas + Skills side by side */}
-      <section className="py-8 sm:py-12">
+      <section className="py-12 sm:py-16">
         <div className="container-wide">
           <div className="grid gap-8 lg:gap-12 lg:grid-cols-2">
             <div id="ideas">
@@ -43,7 +43,7 @@ export default function Home() {
       </section>
 
       {/* Toolbox, Writing & Activity */}
-      <section id="toolbox" className="py-8 sm:py-12" style={{ background: "var(--color-brink-pink)" }}>
+      <section id="toolbox" className="py-12 sm:py-16" style={{ background: "var(--color-brink-pink)" }}>
         <div className="container-wide">
           <div className="grid gap-8 lg:gap-10 lg:grid-cols-3">
             <Toolbox />

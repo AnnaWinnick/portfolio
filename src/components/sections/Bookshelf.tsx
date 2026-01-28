@@ -4,8 +4,12 @@ import { BookshelfClient } from "./BookshelfClient";
 export async function Bookshelf() {
   const books = await getBooks();
 
-  const currentlyReading = books.filter((b) => b.status === "reading");
-  const finished = books.filter((b) => b.status === "finished");
+  const currentlyReading = books
+    .filter((b) => b.status === "reading")
+    .map((b) => ({ ...b, rating: b.rating }));
+  const finished = books
+    .filter((b) => b.status === "finished")
+    .map((b) => ({ ...b, rating: b.rating }));
 
   if (books.length === 0) {
     return (

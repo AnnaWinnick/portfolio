@@ -132,6 +132,14 @@ code, pre, .terminal {
   color: var(--terminal-green);
 }
 
+/* Hero greeting input - placeholder inherits font */
+.hero-name-input::placeholder {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--foreground-muted);
+  opacity: 0.5;
+}
+
 /* Accent link styling */
 a {
   color: var(--accent);

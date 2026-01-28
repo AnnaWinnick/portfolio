@@ -20,7 +20,6 @@ export function IdeaCard({ title, description, createdAt, index }: IdeaCardProps
     new Date(date).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric",
     });
 
   useEffect(() => {
@@ -38,16 +37,16 @@ export function IdeaCard({ title, description, createdAt, index }: IdeaCardProps
     const ctx = gsap.context(() => {
       gsap.fromTo(
         cardRef.current,
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          delay: index * 0.08,
-          ease: "power3.out",
+          duration: 0.4,
+          delay: index * 0.05,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: cardRef.current,
-            start: "top 90%",
+            start: "top 95%",
           },
         }
       );
@@ -59,51 +58,30 @@ export function IdeaCard({ title, description, createdAt, index }: IdeaCardProps
   return (
     <article
       ref={cardRef}
-      className="group relative bg-white/60 backdrop-blur-sm rounded-2xl p-6 hover-lift border border-[var(--foreground)]/5 cursor-pointer"
+      className="group flex items-start gap-3 p-3 -mx-3 rounded-lg hover:bg-[var(--color-pale-blue)]/30 transition-colors cursor-pointer"
       style={{ opacity: 0 }}
     >
-      {/* Number badge */}
-      <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-[var(--accent-primary)] flex items-center justify-center shadow-lg">
-        <span className="font-mono text-sm font-bold text-white">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-      </div>
+      {/* Number */}
+      <span className="font-mono text-sm text-[var(--accent-primary)] opacity-60 pt-0.5">
+        {String(index + 1).padStart(2, "0")}
+      </span>
 
       {/* Content */}
-      <div className="pt-2">
-        <h3 className="display-sm mb-3 group-hover:text-[var(--accent-primary)] transition-colors pr-4">
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-[var(--foreground)] group-hover:text-[var(--accent-primary)] transition-colors leading-tight">
           {title}
         </h3>
-
         {description && (
-          <p className="body-md text-[var(--foreground-muted)] mb-4 line-clamp-3">
+          <p className="text-sm text-[var(--foreground-muted)] mt-1 line-clamp-1">
             {description}
           </p>
         )}
-
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-[var(--foreground)]/10">
-          <span className="font-mono text-xs text-[var(--foreground-muted)]">
-            {formatDate(createdAt)}
-          </span>
-          <span className="inline-flex items-center gap-1 text-sm text-[var(--accent-primary)] font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-            Read more
-            <svg
-              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </span>
-        </div>
       </div>
+
+      {/* Date */}
+      <span className="font-mono text-xs text-[var(--foreground-muted)] shrink-0">
+        {formatDate(createdAt)}
+      </span>
     </article>
   );
 }

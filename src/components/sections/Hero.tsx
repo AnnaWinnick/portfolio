@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,9 +27,12 @@ export function Hero({
   role = "Creative DevOps Engineer",
   tagline = "Painting, crocheting, and shipping infrastructure with equal enthusiasm.",
   email = "anna@example.com",
-  resumeUrl = "/resume.pdf",
   imageUrl,
 }: HeroProps) {
+  const [visitorName, setVisitorName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
   const nameRef = useRef<HTMLHeadingElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
@@ -38,6 +41,26 @@ export function Hero({
   const shapeRef2 = useRef<HTMLDivElement>(null);
   const shapesContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!visitorName.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      await fetch("/api/visitor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: visitorName.trim() }),
+      });
+      setHasSubmitted(true);
+    } catch (error) {
+      console.error("Failed to log visitor:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const prefersReducedMotion = usePrefersReducedMotion();
@@ -49,12 +72,22 @@ export function Hero({
         gsap.set(letters, { opacity: 1, y: 0 });
       }
       gsap.set([roleRef.current, taglineRef.current, ctaRef.current], { opacity: 1, y: 0 });
+      if (photoRef.current) gsap.set(photoRef.current, { opacity: 1 });
       return;
     }
 
     const ctx = gsap.context(() => {
       // Timeline for entrance animations
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // Animate photo first (subtle fade in)
+      if (photoRef.current) {
+        tl.from(photoRef.current, {
+          opacity: 0,
+          scale: 1.05,
+          duration: 1.5,
+        });
+      }
 
       // Animate name letters
       if (nameRef.current) {
@@ -64,7 +97,7 @@ export function Hero({
           opacity: 0,
           duration: 1.2,
           stagger: 0.04,
-        });
+        }, "-=1.2");
       }
 
       // Animate role
@@ -174,8 +207,49 @@ export function Hero({
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen flex flex-col justify-center relative overflow-hidden py-20"
+      className="min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center relative overflow-hidden py-12 sm:py-16"
     >
+      {/* Background photo placeholder */}
+      <div
+        ref={photoRef}
+        className="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block pointer-events-none"
+      >
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-l from-[var(--color-lavender)]/60 via-[var(--color-pale-blue)]/40 to-transparent">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center opacity-30">
+                <svg
+                  className="w-32 h-32 mx-auto text-[var(--foreground-muted)]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={0.5}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mt-4 block">
+                  Photo placeholder
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/80 to-transparent" />
+      </div>
+
       {/* Animated gradient overlay */}
       <div
         className="absolute inset-0 pointer-events-none opacity-30"
@@ -212,20 +286,64 @@ export function Hero({
 
       {/* Content */}
       <div className="container-wide relative z-10">
-        <div className="max-w-5xl">
-          {/* Name - massive display */}
-          <h1
-            ref={nameRef}
-            className="display-xl mb-8"
-            style={{ overflow: "hidden" }}
-          >
-            {nameLetters}
-          </h1>
+        <div>
+          {/* Greeting with name */}
+          <div className="mb-8">
+            {hasSubmitted ? (
+              <h1
+                ref={nameRef}
+                className="text-4xl sm:text-6xl lg:text-7xl tracking-tight"
+                style={{ overflow: "hidden", fontFamily: "var(--font-mono), monospace" }}
+              >
+                <span className="text-[var(--foreground)]">Hi </span>
+                <span className="text-[var(--accent-primary)]">{visitorName}</span>
+                <span className="text-[var(--foreground)]">, I&apos;m </span>
+                <span className="font-bold text-[var(--accent-secondary)]">{nameLetters}</span>
+              </h1>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <h1
+                  ref={nameRef}
+                  className="text-4xl sm:text-6xl lg:text-7xl tracking-tight"
+                  style={{ overflow: "hidden", fontFamily: "var(--font-mono), monospace" }}
+                >
+                  <span className="text-[var(--foreground)]">Hi </span>
+                  <span className="inline-flex flex-col">
+                    <input
+                      type="text"
+                      value={visitorName}
+                      onChange={(e) => setVisitorName(e.target.value)}
+                      placeholder="you"
+                      className="hero-name-input bg-transparent border-b-2 border-[var(--accent-primary)]/50 focus:border-[var(--accent-primary)] outline-none w-28 sm:w-40 lg:w-48 text-[var(--accent-primary)]"
+                      style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontSize: "inherit",
+                        lineHeight: "inherit",
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      disabled={!visitorName.trim() || isSubmitting}
+                      className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-[var(--foreground-muted)] hover:text-[var(--accent-primary)] disabled:opacity-50 transition-colors mt-1"
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      <span>tell me you&apos;re here</span>
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </button>
+                  </span>
+                  <span className="text-[var(--foreground)]">, I&apos;m </span>
+                  <span className="font-bold text-[var(--accent-secondary)]">{nameLetters}</span>
+                </h1>
+              </form>
+            )}
+          </div>
 
           {/* Role */}
           <p
             ref={roleRef}
-            className="display-sm text-[var(--accent-secondary)] mb-12"
+            className="font-mono text-xl sm:text-2xl text-[var(--accent-secondary)] mb-8"
           >
             {role}
           </p>
@@ -233,10 +351,25 @@ export function Hero({
           {/* Tagline */}
           <p
             ref={taglineRef}
-            className="body-lg text-[var(--foreground-muted)] max-w-2xl mb-12"
+            className="body-lg text-[var(--foreground-muted)] max-w-lg mb-8"
           >
             {tagline}
           </p>
+
+          {/* Tech stack badges */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {["Next.js", "TypeScript", "Prisma", "Docker"].map((tech) => (
+              <span
+                key={tech}
+                className="px-3 py-1 text-xs font-mono bg-[var(--foreground)]/5 text-[var(--foreground-muted)] rounded-full border border-[var(--foreground)]/10"
+              >
+                {tech}
+              </span>
+            ))}
+            <span className="px-3 py-1 text-xs font-mono text-[var(--foreground-muted)]/60">
+              self-hosted
+            </span>
+          </div>
 
           {/* CTAs */}
           <div ref={ctaRef} className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
@@ -254,20 +387,6 @@ export function Hero({
             </a>
           </div>
         </div>
-
-        {/* Optional portrait */}
-        {imageUrl && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden lg:block">
-            <Image
-              src={imageUrl}
-              alt={name}
-              width={400}
-              height={500}
-              className="aspect-[4/5] object-cover"
-              priority
-            />
-          </div>
-        )}
       </div>
 
       {/* Scroll indicator - hidden on mobile */}

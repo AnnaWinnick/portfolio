@@ -63,24 +63,21 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
 
   return (
     <>
-      <section ref={containerRef} className="h-screen relative overflow-hidden">
+      <section ref={containerRef} className="min-h-[400px] h-[50vh] max-h-[600px] relative overflow-hidden">
         {/* Section title - fixed position */}
-        <div ref={titleRef} className="absolute top-8 left-0 z-10 container-wide" style={{ opacity: 0 }}>
-          <span className="font-mono text-xs sm:text-sm text-[var(--foreground-muted)] uppercase tracking-wider mb-2 block">
+        <div ref={titleRef} className="absolute top-6 left-0 z-10 container-wide" style={{ opacity: 0 }}>
+          <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mb-1 block">
             Outside of work
           </span>
-          <h2 className="display-md sm:display-lg">Creative Hobbies</h2>
-          <p className="body-md text-[var(--foreground-muted)] mt-2 max-w-lg hidden sm:block">
-            Art, photography, and creative projects I pursue in my free time.
-          </p>
+          <h2 className="display-md">Creative Hobbies</h2>
         </div>
 
         {/* Horizontal scroll wrapper */}
         <div
           ref={wrapperRef}
-          className="flex items-center h-full gap-6 sm:gap-8 pt-32 sm:pt-40 pb-8"
+          className="flex items-center h-full gap-4 sm:gap-6 pt-20 sm:pt-24 pb-6"
           style={{
-            width: `${images.length * 70 + 30}vw`,
+            width: `${images.length * 50 + 20}vw`,
             paddingLeft: "var(--grid-gutter)",
             paddingRight: "var(--grid-gutter)",
           }}
@@ -91,8 +88,8 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
               onClick={() => setSelectedImage(img)}
               className="flex-shrink-0 relative group cursor-zoom-in focus:outline-none focus:ring-4 focus:ring-[var(--accent-primary)]/50 rounded-xl overflow-hidden"
               style={{
-                width: "clamp(280px, 55vw, 700px)",
-                height: "clamp(200px, 65vh, 500px)",
+                width: "clamp(200px, 40vw, 400px)",
+                height: "clamp(150px, 35vh, 350px)",
               }}
             >
               <img
@@ -103,25 +100,16 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
               />
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                  <span className="font-mono text-xs text-white/60 mb-2 block">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                   {img.caption && (
-                    <p className="text-white text-lg sm:text-xl font-medium">
+                    <p className="text-white text-sm sm:text-base font-medium line-clamp-2">
                       {img.caption}
                     </p>
                   )}
-                  <span className="inline-flex items-center gap-2 mt-3 text-sm text-white/80">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                    </svg>
-                    Click to enlarge
-                  </span>
                 </div>
               </div>
               {/* Index number */}
-              <span className="absolute top-4 right-4 font-mono text-4xl sm:text-6xl text-white/20 pointer-events-none group-hover:text-white/40 transition-colors">
+              <span className="absolute top-3 right-3 font-mono text-2xl sm:text-3xl text-white/20 pointer-events-none group-hover:text-white/40 transition-colors">
                 {String(i + 1).padStart(2, "0")}
               </span>
             </button>
@@ -129,17 +117,9 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 right-8 hidden sm:flex items-center gap-2 text-[var(--foreground-muted)]">
-          <span className="font-mono text-xs uppercase tracking-wider">Scroll</span>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="animate-pulse"
-          >
+        <div className="absolute bottom-4 right-4 hidden sm:flex items-center gap-1 text-[var(--foreground-muted)]/60">
+          <span className="font-mono text-[10px] uppercase tracking-wider">Scroll</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </div>

@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Book {
+  id           String    @id
+  goodreadsId  String?   @unique
+  title        String
+  author       String
+  status       String
+  startDate    DateTime?
+  endDate      DateTime?
+  rating       Int?
+  goodreadsUrl String?
+  coverUrl     String?
+  updatedAt    DateTime
+}
+
+model HobbyImage {
+  id        String   @id
+  url       String
+  caption   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Idea {
+  id          String   @id
+  title       String
+  description String?
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime
+}
+
+model Skill {
+  id            String       @id
+  name          String
+  notes         String?
+  startedAt     DateTime     @default(now())
+  lastUpdatedAt DateTime
+  createdAt     DateTime     @default(now())
+  SkillPhoto    SkillPhoto[]
+}
+
+model SkillPhoto {
+  id        String   @id
+  skillId   String
+  url       String
+  caption   String?
+  createdAt DateTime @default(now())
+  Skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+}
+
+model SubstackPost {
+  id          String   @id
+  title       String
+  excerpt     String?
+  url         String   @unique
+  publishedAt DateTime
+  updatedAt   DateTime
+}
+
+model Tool {
+  id       String  @id
+  name     String
+  category String
+  iconUrl  String?
+  order    Int     @default(0)
+}

@@ -20,26 +20,26 @@ Personal portfolio site showcasing skills, ideas, and projects.
 │                     DigitalOcean Droplet                         │
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │                      Traefik v2.11                       │    │
+│  │                        Traefik                            │    │
 │  │           (Reverse Proxy + Let's Encrypt SSL)            │    │
 │  │                    :80 / :443                            │    │
 │  └─────────────────────────┬───────────────────────────────┘    │
 │                            │                                     │
 │                            ▼                                     │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │               Portfolio (Next.js 16)                     │    │
+│  │                 Portfolio (Next.js)                       │    │
 │  │                      :3000                               │    │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │    │
 │  │  │   App       │  │   Admin     │  │   API Routes    │  │    │
 │  │  │   Router    │  │   Portal    │  │   /api/*        │  │    │
 │  │  └─────────────┘  └─────────────┘  └─────────────────┘  │    │
 │  │                            │                             │    │
-│  │                   Prisma ORM (v7)                        │    │
+│  │                     Prisma ORM                            │    │
 │  └────────────────────────────┬────────────────────────────┘    │
 │                               │                                  │
 │                               ▼                                  │
 │  ┌─────────────────────────────────────────────────────────┐    │
-│  │                 PostgreSQL 16 (Alpine)                   │    │
+│  │                      PostgreSQL                           │    │
 │  │                        :5432                             │    │
 │  └─────────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────┘
@@ -49,11 +49,11 @@ Personal portfolio site showcasing skills, ideas, and projects.
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | Next.js 16, React 19, Tailwind CSS |
+| **Frontend** | Next.js, React, Tailwind CSS |
 | **Backend** | Next.js App Router, Server Components |
-| **Database** | PostgreSQL 16, Prisma ORM 7 |
-| **Auth** | Auth.js (NextAuth v5) with GitHub OAuth |
-| **Reverse Proxy** | Traefik v2.11 (auto SSL via Let's Encrypt) |
+| **Database** | PostgreSQL, Prisma ORM |
+| **Auth** | Auth.js with GitHub OAuth |
+| **Reverse Proxy** | Traefik (auto SSL via Let's Encrypt) |
 | **Container** | Docker, Docker Compose |
 | **CI/CD** | GitHub Actions |
 | **Registry** | GitHub Container Registry (ghcr.io) |

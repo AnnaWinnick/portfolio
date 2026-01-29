@@ -71,6 +71,7 @@ export default async function ToolboxAdmin() {
               <option value="Infrastructure">Infrastructure</option>
               <option value="Tools">Tools</option>
               <option value="Platforms">Platforms</option>
+              <option value="AI">AI</option>
             </select>
           </div>
           <button

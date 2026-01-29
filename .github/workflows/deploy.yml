@@ -6,8 +6,42 @@ on:
   workflow_dispatch: # Allow manual trigger
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/annawinnick/portfolio:latest
+          build-args: |
+            DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+            NEXTAUTH_URL=https://annawinnick.com
+            NEXTAUTH_SECRET=build-time-placeholder
+            GOODREADS_USER_ID=184203247
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@v1.0.3
@@ -41,9 +75,9 @@ jobs:
             # Secure the env file
             chmod 600 .env
 
-            # Build and deploy
+            # Pull pre-built image and deploy (no build needed on droplet)
             docker compose pull
-            docker compose up -d --build --remove-orphans
+            docker compose up -d --remove-orphans
 
             # Run database migrations
             docker compose exec -T portfolio npx prisma db push --skip-generate || true

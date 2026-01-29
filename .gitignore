@@ -25,6 +25,9 @@
 *.pem
 .ssh/*
 
+# Local docker compose overrides (allows local builds while prod uses pre-built images)
+docker-compose.override.yml
+
 # debug
 npm-debug.log*
 yarn-debug.log*

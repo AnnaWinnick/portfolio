@@ -31,13 +31,7 @@ services:
     restart: unless-stopped
 
   portfolio:
-    build:
-      context: .
-      args:
-        - DATABASE_URL=postgresql://portfolio:${DB_PASSWORD}@db:5432/portfolio
-        - NEXTAUTH_URL=${NEXTAUTH_URL}
-        - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-        - GOODREADS_USER_ID=${GOODREADS_USER_ID}
+    image: ghcr.io/annawinnick/portfolio:latest
     environment:
       - DATABASE_URL=postgresql://portfolio:${DB_PASSWORD}@db:5432/portfolio
       - NEXTAUTH_URL=${NEXTAUTH_URL}

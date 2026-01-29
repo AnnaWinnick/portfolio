@@ -15,6 +15,7 @@ jobs:
           host: ${{ secrets.DROPLET_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 30m
           script: |
             # Clone if not exists, otherwise pull
             if [ ! -d "/opt/portfolio/.git" ]; then

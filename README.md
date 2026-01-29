@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Anna Winnick Portfolio
 
-## Getting Started
+Personal portfolio site showcasing skills, ideas, and projects.
 
-First, run the development server:
+**Live:** https://annawinnick.com
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        GitHub Actions                            │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐  │
+│  │  Push to    │───▶│ Build Image │───▶│ Push to ghcr.io     │  │
+│  │  main       │    │ (Docker)    │    │                     │  │
+│  └─────────────┘    └─────────────┘    └──────────┬──────────┘  │
+└──────────────────────────────────────────────────┬──────────────┘
+                                                   │
+                                                   ▼ SSH Deploy
+┌─────────────────────────────────────────────────────────────────┐
+│                     DigitalOcean Droplet                         │
+│                                                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                      Traefik v2.11                       │    │
+│  │           (Reverse Proxy + Let's Encrypt SSL)            │    │
+│  │                    :80 / :443                            │    │
+│  └─────────────────────────┬───────────────────────────────┘    │
+│                            │                                     │
+│                            ▼                                     │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │               Portfolio (Next.js 16)                     │    │
+│  │                      :3000                               │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │    │
+│  │  │   App       │  │   Admin     │  │   API Routes    │  │    │
+│  │  │   Router    │  │   Portal    │  │   /api/*        │  │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │    │
+│  │                            │                             │    │
+│  │                   Prisma ORM (v7)                        │    │
+│  └────────────────────────────┬────────────────────────────┘    │
+│                               │                                  │
+│                               ▼                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                 PostgreSQL 16 (Alpine)                   │    │
+│  │                        :5432                             │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Next.js 16, React 19, Tailwind CSS |
+| **Backend** | Next.js App Router, Server Components |
+| **Database** | PostgreSQL 16, Prisma ORM 7 |
+| **Auth** | Auth.js (NextAuth v5) with GitHub OAuth |
+| **Reverse Proxy** | Traefik v2.11 (auto SSL via Let's Encrypt) |
+| **Container** | Docker, Docker Compose |
+| **CI/CD** | GitHub Actions |
+| **Registry** | GitHub Container Registry (ghcr.io) |
+| **Hosting** | DigitalOcean Droplet |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## External Integrations
 
-## Learn More
+- **GitHub API** - Recent commit activity
+- **Goodreads RSS** - Currently reading / bookshelf
+- **Substack RSS** - Blog posts
+- **Spotify API** - Now playing (planned)
 
-To learn more about Next.js, take a look at the following resources:
+## Local Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Install dependencies
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Set up environment variables
+cp .env.example .env.local
 
-## Deploy on Vercel
+# Generate Prisma client
+npx prisma generate
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Run database (requires Docker)
+docker compose up db -d
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Push schema to database
+npx prisma db push
+
+# Start dev server
+npm run dev
+```
+
+Open http://localhost:3000
+
+## Deployment
+
+Deployment is automatic on push to `main` (except for docs/beads changes).
+
+Manual deploy:
+1. Go to Actions tab
+2. Select "Deploy to DigitalOcean"
+3. Click "Run workflow"
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── admin/              # Admin portal (protected)
+│   ├── api/                # API routes
+│   └── page.tsx            # Homepage
+├── components/
+│   └── sections/           # Page sections (Hero, Toolbox, etc.)
+├── lib/
+│   ├── auth.ts             # Auth.js configuration
+│   ├── prisma.ts           # Database client
+│   ├── github.ts           # GitHub API integration
+│   └── goodreads.ts        # Goodreads RSS parser
+└── generated/
+    └── prisma/             # Generated Prisma client
+```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `NEXTAUTH_URL` | Public URL for auth callbacks |
+| `NEXTAUTH_SECRET` | Auth.js secret key |
+| `AUTH_TRUST_HOST` | Trust proxy headers (required behind Traefik) |
+| `GITHUB_ID` | GitHub OAuth App client ID |
+| `GITHUB_SECRET` | GitHub OAuth App client secret |
+| `ADMIN_EMAIL` | Email allowed to access admin portal |
+| `GOODREADS_USER_ID` | Goodreads user ID for bookshelf |

@@ -80,7 +80,7 @@ jobs:
             docker compose up -d --remove-orphans
 
             # Run database migrations
-            docker compose exec -T portfolio npx prisma db push --skip-generate || true
+            docker compose exec -T portfolio npx prisma db push || true
 
             # Cleanup old images
             docker image prune -f

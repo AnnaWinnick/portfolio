@@ -3,6 +3,12 @@ name: Deploy to DigitalOcean
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '.beads/**'
+      - '*.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
   workflow_dispatch: # Allow manual trigger
 
 jobs:

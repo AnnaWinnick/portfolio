@@ -16,8 +16,14 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Navigate to project
+            # Clone if not exists, otherwise pull
+            if [ ! -d "/opt/portfolio/.git" ]; then
+              rm -rf /opt/portfolio
+              git clone https://github.com/AnnaWinnick/portfolio.git /opt/portfolio
+            fi
+
             cd /opt/portfolio
+            git pull origin main
 
             # Create/update .env with secrets from GitHub
             cat > .env << 'ENVEOF'
@@ -34,11 +40,7 @@ jobs:
             # Secure the env file
             chmod 600 .env
 
-            # Pull latest code
-            cd /opt/portfolio/app && git pull origin main
-
             # Build and deploy
-            cd /opt/portfolio
             docker compose pull
             docker compose up -d --build --remove-orphans
 

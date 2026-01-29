@@ -32,7 +32,7 @@ services:
 
   portfolio:
     build:
-      context: ./app
+      context: .
       args:
         - DATABASE_URL=postgresql://portfolio:${DB_PASSWORD}@db:5432/portfolio
         - NEXTAUTH_URL=${NEXTAUTH_URL}

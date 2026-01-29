@@ -25,8 +25,8 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             NEXTAUTH_URL=https://annawinnick.com
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            GITHUB_ID=${{ secrets.GITHUB_OAUTH_ID }}
-            GITHUB_SECRET=${{ secrets.GITHUB_OAUTH_SECRET }}
+            GITHUB_ID=${{ secrets.OAUTH_CLIENT_ID }}
+            GITHUB_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}
             ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
             GOODREADS_USER_ID=184203247
             ENVEOF

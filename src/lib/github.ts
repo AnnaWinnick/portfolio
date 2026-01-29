@@ -8,39 +8,62 @@ interface GitHubCommit {
 
 export async function getRecentCommits(username: string, limit = 5): Promise<GitHubCommit[]> {
   const token = process.env.GITHUB_TOKEN;
+  const headers: HeadersInit = {
+    Accept: "application/vnd.github.v3+json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 
   try {
-    const response = await fetch(
+    // First get recent push events to find repos with activity
+    const eventsResponse = await fetch(
       `https://api.github.com/users/${username}/events/public`,
       {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers,
         next: { revalidate: 300 }, // Cache for 5 minutes
       }
     );
 
-    if (!response.ok) {
-      console.error("Failed to fetch GitHub events:", response.status);
+    if (!eventsResponse.ok) {
+      console.error("Failed to fetch GitHub events:", eventsResponse.status);
       return [];
     }
 
-    const events = await response.json();
+    const events = await eventsResponse.json();
+
+    // Get unique repos from push events
+    const pushEvents = events
+      .filter((e: { type: string }) => e.type === "PushEvent")
+      .slice(0, 3); // Check up to 3 recent push events
 
     const commits: GitHubCommit[] = [];
-    for (const event of events) {
-      if (event.type === "PushEvent" && event.payload.commits) {
-        for (const commit of event.payload.commits) {
-          commits.push({
-            sha: commit.sha.slice(0, 7),
-            message: commit.message.split("\n")[0].slice(0, 50) +
-              (commit.message.length > 50 ? "..." : ""),
-            repo: event.repo.name.split("/")[1],
-            url: `https://github.com/${event.repo.name}/commit/${commit.sha}`,
-            date: new Date(event.created_at),
-          });
-          if (commits.length >= limit) break;
-        }
-      }
+
+    for (const event of pushEvents) {
       if (commits.length >= limit) break;
+
+      const repoName = event.repo.name;
+      const headSha = event.payload.head;
+
+      // Fetch the actual commit details
+      const commitResponse = await fetch(
+        `https://api.github.com/repos/${repoName}/commits/${headSha}`,
+        {
+          headers,
+          next: { revalidate: 300 },
+        }
+      );
+
+      if (commitResponse.ok) {
+        const commitData = await commitResponse.json();
+        commits.push({
+          sha: commitData.sha.slice(0, 7),
+          message:
+            commitData.commit.message.split("\n")[0].slice(0, 50) +
+            (commitData.commit.message.split("\n")[0].length > 50 ? "..." : ""),
+          repo: repoName.split("/")[1],
+          url: commitData.html_url,
+          date: new Date(commitData.commit.author.date),
+        });
+      }
     }
 
     return commits;

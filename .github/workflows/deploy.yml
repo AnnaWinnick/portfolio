@@ -1,0 +1,49 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Navigate to project
+            cd /opt/portfolio
+
+            # Create/update .env with secrets from GitHub
+            cat > .env << 'ENVEOF'
+            ACME_EMAIL=${{ secrets.ACME_EMAIL }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            NEXTAUTH_URL=https://annawinnick.com
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            GITHUB_ID=${{ secrets.GITHUB_OAUTH_ID }}
+            GITHUB_SECRET=${{ secrets.GITHUB_OAUTH_SECRET }}
+            ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+            GOODREADS_USER_ID=184203247
+            ENVEOF
+
+            # Secure the env file
+            chmod 600 .env
+
+            # Pull latest code
+            cd /opt/portfolio/app && git pull origin main
+
+            # Build and deploy
+            cd /opt/portfolio
+            docker compose pull
+            docker compose up -d --build --remove-orphans
+
+            # Run database migrations
+            docker compose exec -T portfolio npx prisma db push --skip-generate || true
+
+            # Cleanup old images
+            docker image prune -f

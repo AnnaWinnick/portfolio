@@ -191,7 +191,7 @@ export function BookshelfClient({
         </div>
 
         {/* Side by side sections */}
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-8 lg:grid-cols-[1fr_3fr]">
           {/* Currently Reading */}
           {currentlyReading.length > 0 && (
             <div>

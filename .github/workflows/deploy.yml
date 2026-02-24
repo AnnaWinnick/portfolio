@@ -76,6 +76,9 @@ jobs:
             GITHUB_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}
             ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
             GOODREADS_USER_ID=184203247
+            SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+            SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+            SPOTIFY_REFRESH_TOKEN=${{ secrets.SPOTIFY_REFRESH_TOKEN }}
             ENVEOF
 
             # Secure the env file

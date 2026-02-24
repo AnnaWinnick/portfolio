@@ -118,15 +118,3 @@ src/
     └── prisma/             # Generated Prisma client
 ```
 
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `NEXTAUTH_URL` | Public URL for auth callbacks |
-| `NEXTAUTH_SECRET` | Auth.js secret key |
-| `AUTH_TRUST_HOST` | Trust proxy headers (required behind Traefik) |
-| `GITHUB_ID` | GitHub OAuth App client ID |
-| `GITHUB_SECRET` | GitHub OAuth App client secret |
-| `ADMIN_EMAIL` | Email allowed to access admin portal |
-| `GOODREADS_USER_ID` | Goodreads user ID for bookshelf |

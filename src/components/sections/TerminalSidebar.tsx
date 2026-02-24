@@ -1,10 +1,10 @@
-import { getNowPlaying } from "@/lib/spotify";
+import { getTopTrack } from "@/lib/spotify";
 import { getRecentCommits } from "@/lib/github";
 import prisma from "@/lib/prisma";
 import { isOverdue } from "@/lib/utils";
 
 export async function TerminalSidebar() {
-  const nowPlaying = await getNowPlaying();
+  const topTrack = await getTopTrack();
   const commits = await getRecentCommits("annawinnick", 3);
 
   // Check if any skills are overdue
@@ -20,42 +20,37 @@ export async function TerminalSidebar() {
 
   return (
     <aside className="space-y-6">
-      {/* Spotify Now Playing - Glassmorphism */}
+      {/* Spotify Top Song - Glassmorphism */}
       <div className="glass-dark p-5 hover-lift">
         <div className="flex items-start gap-4">
-          {/* Waveform visualization */}
-          <div className="flex items-end gap-1 h-8 shrink-0">
-            {nowPlaying?.isPlaying ? (
-              <>
-                <div className="waveform-bar" />
-                <div className="waveform-bar" />
-                <div className="waveform-bar" />
-                <div className="waveform-bar" />
-                <div className="waveform-bar" />
-              </>
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-[var(--accent-secondary)]/20 flex items-center justify-center">
-                <span className="text-[var(--accent-secondary)]">♪</span>
-              </div>
-            )}
-          </div>
+          {topTrack?.albumArt ? (
+            <img
+              src={topTrack.albumArt}
+              alt={`${topTrack.name} album art`}
+              className="w-12 h-12 rounded-lg shrink-0"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-[var(--accent-secondary)]/20 flex items-center justify-center shrink-0">
+              <span className="text-[var(--accent-secondary)] text-lg">♪</span>
+            </div>
+          )}
 
           <div className="flex-1 min-w-0">
             <p className="font-mono text-xs text-[var(--accent-secondary)] uppercase tracking-wider mb-1">
-              {nowPlaying?.isPlaying ? "Now Playing" : "Last Played"}
+              Top Song This Month
             </p>
-            {nowPlaying ? (
+            {topTrack ? (
               <a
-                href={nowPlaying.url}
+                href={topTrack.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block group"
               >
                 <p className="font-medium text-[var(--foreground-dark)] truncate group-hover:text-[var(--accent-primary)] transition-colors">
-                  {nowPlaying.name}
+                  {topTrack.name}
                 </p>
                 <p className="text-sm text-[var(--foreground-dark-muted)] truncate">
-                  {nowPlaying.artist}
+                  {topTrack.artist}
                 </p>
               </a>
             ) : (

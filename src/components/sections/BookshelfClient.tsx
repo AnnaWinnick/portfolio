@@ -124,20 +124,22 @@ function BookCard({
       </a>
 
       {/* Star rating or start date - shows underneath on hover */}
-      {book.status === "reading" && book.startedAt ? (
-        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center">
-          <span className="block text-[10px] text-[var(--foreground-dark-muted)] font-mono uppercase tracking-wider">
-            Started
-          </span>
-          <span className="block text-xs text-[var(--foreground-dark-muted)] font-mono">
-            {book.startedAt}
-          </span>
-        </div>
-      ) : book.rating && book.rating > 0 ? (
-        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-[1.5rem] flex items-center justify-center">
+        {book.status === "reading" && book.startedAt ? (
+          <div className="text-center">
+            <span className="block text-[10px] text-[var(--foreground-dark-muted)] font-mono uppercase tracking-wider">
+              Started
+            </span>
+            <span className="block text-xs text-[var(--foreground-dark-muted)] font-mono">
+              {book.startedAt}
+            </span>
+          </div>
+        ) : book.rating && book.rating > 0 ? (
           <StarRating rating={book.rating} size="xs" />
-        </div>
-      ) : null}
+        ) : (
+          <span className="text-[10px] text-[var(--foreground-dark-muted)]/50 font-mono">Unrated</span>
+        )}
+      </div>
     </div>
   );
 }

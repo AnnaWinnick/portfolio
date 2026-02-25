@@ -171,14 +171,19 @@ export function Hero({
     };
   }, []);
 
-  // Split name into letters for animation
-  const nameLetters = name.split("").map((char, i) => (
-    <span
-      key={i}
-      className="letter inline-block"
-      style={{ display: char === " " ? "inline" : "inline-block" }}
-    >
-      {char === " " ? "\u00A0" : char}
+  // Split name into letters for animation, keeping words as atomic units
+  const words = name.split(" ");
+  const nameLetters = words.map((word, wordIndex) => (
+    <span key={wordIndex} style={{ whiteSpace: "nowrap", display: "inline-block" }}>
+      {word.split("").map((char, charIndex) => (
+        <span
+          key={`${wordIndex}-${charIndex}`}
+          className="letter inline-block"
+        >
+          {char}
+        </span>
+      ))}
+      {wordIndex < words.length - 1 && <span className="letter" style={{ display: "inline" }}>{"\u00A0"}</span>}
     </span>
   ));
 

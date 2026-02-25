@@ -16,8 +16,8 @@ interface AboutProps {
 
 export function About({
   name = "Anna Winnick",
-  title = "Creative DevOps Engineer",
-  bio = "I'm a DevOps engineer with a passion for creativity. When I'm not building infrastructure or automating deployments, you'll find me painting, crocheting, or exploring new hobbies. I believe that creativity and engineering go hand in hand—both require problem-solving, experimentation, and a willingness to iterate until you get it right.",
+  title = "Creative Platform Engineer",
+  bio = "I'm a platform engineer with a passion for creativity. When I'm not building infrastructure or automating deployments, you'll find me painting, crocheting, or exploring new hobbies. I believe that creativity and engineering go hand in hand—both require problem-solving, experimentation, and a willingness to iterate until you get it right.",
   imageUrl,
   resumeUrl = "/resume.pdf",
 }: AboutProps) {

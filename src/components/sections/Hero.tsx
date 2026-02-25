@@ -323,7 +323,7 @@ export function Hero({
             ref={roleRef}
             className="text-lg sm:text-xl text-[var(--foreground-muted)] max-w-2xl mb-6"
           >
-            A <span className="text-[var(--accent-secondary)] font-medium">Creative DevOps Engineer</span> who is{" "}
+            A <span className="text-[var(--accent-secondary)] font-medium">Creative Platform Engineer</span> who is{" "}
             <a href="#hobbies" className="text-[var(--foreground)] underline decoration-[var(--accent-primary)]/50 hover:decoration-[var(--accent-primary)] transition-colors">painting</a>,{" "}
             <a href="#hobbies" className="text-[var(--foreground)] underline decoration-[var(--accent-primary)]/50 hover:decoration-[var(--accent-primary)] transition-colors">crocheting</a>, and shipping infrastructure with equal enthusiasm.
           </p>

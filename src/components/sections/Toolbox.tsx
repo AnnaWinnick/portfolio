@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { ToolboxContent } from "./ToolboxContent";
 
 export async function Toolbox() {
   const tools = await prisma.tool.findMany({
@@ -41,28 +42,7 @@ export async function Toolbox() {
   return (
     <div>
       <h2 className="display-sm mb-12">Toolbox</h2>
-      <div className="grid gap-8 sm:grid-cols-2">
-        {sortedCategories.map(([category, categoryTools]) => (
-          <div key={category}>
-            <h4 className="font-mono text-xs text-[var(--foreground)]/60 uppercase tracking-wider mb-4">
-              {category}
-            </h4>
-            <ul className="space-y-2">
-              {categoryTools.map((tool) => (
-                <li
-                  key={tool.id}
-                  className="flex items-center gap-3 text-[var(--foreground)] group"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-poppy)] group-hover:scale-150 transition-transform" />
-                  <span className="group-hover:text-[var(--color-poppy)] transition-colors">
-                    {tool.name}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <ToolboxContent sortedCategories={sortedCategories} />
     </div>
   );
 }

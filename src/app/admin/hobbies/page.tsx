@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { addHobbyImage, deleteHobbyImage, moveHobbyImage } from "@/app/actions/hobbies";
 
 export default async function HobbiesAdmin() {
   const session = await auth();
@@ -11,60 +11,6 @@ export default async function HobbiesAdmin() {
     orderBy: { order: "asc" },
   });
 
-  async function addImage(formData: FormData) {
-    "use server";
-    const url = formData.get("url") as string;
-    const caption = formData.get("caption") as string;
-
-    if (!url) return;
-
-    const maxOrder = await prisma.hobbyImage.aggregate({ _max: { order: true } });
-    const order = (maxOrder._max.order ?? -1) + 1;
-
-    await prisma.hobbyImage.create({
-      data: { id: crypto.randomUUID(), url, caption: caption || null, order },
-    });
-    revalidatePath("/admin/hobbies");
-    revalidatePath("/");
-  }
-
-  async function deleteImage(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    if (!id) return;
-
-    await prisma.hobbyImage.delete({ where: { id } });
-    revalidatePath("/admin/hobbies");
-    revalidatePath("/");
-  }
-
-  async function moveImage(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    const direction = formData.get("direction") as "up" | "down";
-    if (!id || !direction) return;
-
-    const current = await prisma.hobbyImage.findUnique({ where: { id } });
-    if (!current) return;
-
-    const newOrder = direction === "up" ? current.order - 1 : current.order + 1;
-    const swap = await prisma.hobbyImage.findFirst({ where: { order: newOrder } });
-
-    if (swap) {
-      await prisma.hobbyImage.update({
-        where: { id: swap.id },
-        data: { order: current.order },
-      });
-    }
-    await prisma.hobbyImage.update({
-      where: { id },
-      data: { order: newOrder },
-    });
-
-    revalidatePath("/admin/hobbies");
-    revalidatePath("/");
-  }
-
   return (
     <main className="min-h-screen px-6 py-16 md:px-12 lg:px-24">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -73,7 +19,7 @@ export default async function HobbiesAdmin() {
             href="/admin"
             className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
           >
-            ← Back to Dashboard
+            &larr; Back to Dashboard
           </a>
           <h1 className="mt-4">Creative Hobbies Gallery</h1>
           <p className="text-[var(--foreground-muted)]">
@@ -82,7 +28,7 @@ export default async function HobbiesAdmin() {
         </header>
 
         {/* Add image form */}
-        <form action={addImage} className="p-6 bg-[var(--background-alt)] rounded-lg space-y-4">
+        <form action={addHobbyImage} className="p-6 bg-[var(--background-alt)] rounded-lg space-y-4">
           <h3>Add Image</h3>
           <input
             name="url"
@@ -124,24 +70,24 @@ export default async function HobbiesAdmin() {
                     )}
                     <div className="flex gap-2">
                       {idx > 0 && (
-                        <form action={moveImage}>
+                        <form action={moveHobbyImage}>
                           <input type="hidden" name="id" value={img.id} />
                           <input type="hidden" name="direction" value="up" />
                           <button className="px-2 py-1 bg-white/20 text-white rounded text-sm">
-                            ←
+                            &larr;
                           </button>
                         </form>
                       )}
                       {idx < images.length - 1 && (
-                        <form action={moveImage}>
+                        <form action={moveHobbyImage}>
                           <input type="hidden" name="id" value={img.id} />
                           <input type="hidden" name="direction" value="down" />
                           <button className="px-2 py-1 bg-white/20 text-white rounded text-sm">
-                            →
+                            &rarr;
                           </button>
                         </form>
                       )}
-                      <form action={deleteImage}>
+                      <form action={deleteHobbyImage}>
                         <input type="hidden" name="id" value={img.id} />
                         <button className="px-2 py-1 bg-red-600 text-white rounded text-sm">
                           Delete

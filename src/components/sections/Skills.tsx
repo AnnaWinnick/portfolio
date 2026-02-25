@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { isOverdue } from "@/lib/utils";
-import { SkillCard } from "./SkillCard";
+import { SkillsContent } from "./SkillsContent";
 
 export async function Skills() {
   const skills = await prisma.skill.findMany({
@@ -16,6 +16,15 @@ export async function Skills() {
   const reminderDays = reminderSetting ? parseInt(reminderSetting.value) : 14;
   const hasOverdueSkills = skills.some((s) => isOverdue(s.lastUpdatedAt, reminderDays));
 
+  const skillsData = skills.map((s) => ({
+    id: s.id,
+    name: s.name,
+    notes: s.notes,
+    startedAt: s.startedAt,
+    lastUpdatedAt: s.lastUpdatedAt,
+    photoUrl: s.SkillPhoto[0]?.url ?? null,
+  }));
+
   return (
     <div>
       {/* Section header */}
@@ -28,26 +37,7 @@ export async function Skills() {
         </h2>
       </div>
 
-      {/* Skills list */}
-      {skills.length === 0 ? (
-        <div className="bg-[var(--color-lavender)]/50 rounded-xl p-8 text-center">
-          <p className="text-[var(--foreground-muted)]">Learning journey starting soon...</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {skills.map((skill, index) => (
-            <SkillCard
-              key={skill.id}
-              name={skill.name}
-              notes={skill.notes}
-              startedAt={skill.startedAt}
-              lastUpdatedAt={skill.lastUpdatedAt}
-              photoUrl={skill.SkillPhoto[0]?.url}
-              index={index}
-            />
-          ))}
-        </div>
-      )}
+      <SkillsContent skills={skillsData} />
 
       {/* Nudge button - only shows when skills are overdue */}
       {hasOverdueSkills && (

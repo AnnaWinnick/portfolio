@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { formatDistanceToNow, isOverdue } from "@/lib/utils";
+import { addSkill, updateSkill, deleteSkill } from "@/app/actions/skills";
 
 export default async function SkillsAdmin() {
   const session = await auth();
@@ -19,45 +19,6 @@ export default async function SkillsAdmin() {
   });
   const reminderDays = reminderSetting ? parseInt(reminderSetting.value) : 14;
 
-  async function addSkill(formData: FormData) {
-    "use server";
-    const name = formData.get("name") as string;
-    const notes = formData.get("notes") as string;
-
-    if (!name) return;
-
-    await prisma.skill.create({
-      data: { id: crypto.randomUUID(), name, notes: notes || null, lastUpdatedAt: new Date() },
-    });
-    revalidatePath("/admin/skills");
-    revalidatePath("/");
-  }
-
-  async function updateSkill(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    const notes = formData.get("notes") as string;
-
-    if (!id) return;
-
-    await prisma.skill.update({
-      where: { id },
-      data: { notes, lastUpdatedAt: new Date() },
-    });
-    revalidatePath("/admin/skills");
-    revalidatePath("/");
-  }
-
-  async function deleteSkill(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    if (!id) return;
-
-    await prisma.skill.delete({ where: { id } });
-    revalidatePath("/admin/skills");
-    revalidatePath("/");
-  }
-
   return (
     <main className="min-h-screen px-6 py-16 md:px-12 lg:px-24">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -66,7 +27,7 @@ export default async function SkillsAdmin() {
             href="/admin"
             className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
           >
-            ← Back to Dashboard
+            &larr; Back to Dashboard
           </a>
           <h1 className="mt-4">Skills I&apos;m Growing</h1>
           <p className="text-[var(--foreground-muted)]">
@@ -119,7 +80,7 @@ export default async function SkillsAdmin() {
                       <div>
                         <p className="font-medium">{skill.name}</p>
                         <p className="text-xs text-[var(--foreground-muted)]">
-                          Started {skill.startedAt.toLocaleDateString()} •{" "}
+                          Started {skill.startedAt.toLocaleDateString()} &bull;{" "}
                           <span className={overdue ? "text-[var(--accent)] font-semibold" : ""}>
                             Updated {formatDistanceToNow(skill.lastUpdatedAt)}
                           </span>

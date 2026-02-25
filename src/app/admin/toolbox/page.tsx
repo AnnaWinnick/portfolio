@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { addTool, deleteTool } from "@/app/actions/toolbox";
 
 export default async function ToolboxAdmin() {
   const session = await auth();
@@ -11,30 +11,6 @@ export default async function ToolboxAdmin() {
     orderBy: [{ category: "asc" }, { order: "asc" }],
   });
 
-  async function addTool(formData: FormData) {
-    "use server";
-    const name = formData.get("name") as string;
-    const category = formData.get("category") as string;
-
-    if (!name || !category) return;
-
-    await prisma.tool.create({
-      data: { id: crypto.randomUUID(), name, category },
-    });
-    revalidatePath("/admin/toolbox");
-    revalidatePath("/");
-  }
-
-  async function deleteTool(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    if (!id) return;
-
-    await prisma.tool.delete({ where: { id } });
-    revalidatePath("/admin/toolbox");
-    revalidatePath("/");
-  }
-
   return (
     <main className="min-h-screen px-6 py-16 md:px-12 lg:px-24">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -43,7 +19,7 @@ export default async function ToolboxAdmin() {
             href="/admin"
             className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
           >
-            ← Back to Dashboard
+            &larr; Back to Dashboard
           </a>
           <h1 className="mt-4">Toolbox</h1>
           <p className="text-[var(--foreground-muted)]">

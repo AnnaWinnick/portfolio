@@ -26,7 +26,7 @@ export async function Skills() {
   }));
 
   return (
-    <div>
+    <div className="bg-gradient-to-b from-[var(--color-lavender)]/40 to-transparent rounded-2xl p-6">
       {/* Section header */}
       <div className="mb-6 sm:mb-8">
         <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mb-2 block">

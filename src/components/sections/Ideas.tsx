@@ -13,7 +13,7 @@ export async function Ideas() {
       {/* Section header */}
       <div className="mb-6 sm:mb-8">
         <span className="font-mono text-xs text-[var(--foreground-muted)] uppercase tracking-wider mb-2 block">
-          Stream of consciousness
+          What I&apos;m thinking about
         </span>
         <h2 className="display-sm text-[var(--foreground)]">Ideas</h2>
       </div>

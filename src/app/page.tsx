@@ -30,17 +30,17 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Ideas - Full-width thought feed */}
-      <section id="ideas" className="py-12 sm:py-16">
+      {/* Ideas + Skills side by side */}
+      <section className="py-12 sm:py-16">
         <div className="container-wide">
-          <Ideas />
-        </div>
-      </section>
-
-      {/* Skills */}
-      <section id="skills" className="py-12 sm:py-16">
-        <div className="container-wide">
-          <Skills />
+          <div className="grid gap-8 lg:gap-12 lg:grid-cols-2">
+            <div id="ideas">
+              <Ideas />
+            </div>
+            <div id="skills">
+              <Skills />
+            </div>
+          </div>
         </div>
       </section>
 

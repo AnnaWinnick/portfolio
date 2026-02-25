@@ -8,6 +8,7 @@ export async function addHobbyImage(formData: FormData) {
   await requireAdmin();
   const url = formData.get("url") as string;
   const caption = formData.get("caption") as string;
+  const mediaId = formData.get("mediaId") as string;
 
   if (!url) return;
 
@@ -17,7 +18,13 @@ export async function addHobbyImage(formData: FormData) {
   const order = (maxOrder._max.order ?? -1) + 1;
 
   await prisma.hobbyImage.create({
-    data: { id: crypto.randomUUID(), url, caption: caption || null, order },
+    data: {
+      id: crypto.randomUUID(),
+      url,
+      caption: caption || null,
+      order,
+      mediaId: mediaId || null,
+    },
   });
   revalidatePath("/");
 }

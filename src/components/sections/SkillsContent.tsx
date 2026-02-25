@@ -3,7 +3,8 @@
 import { useAdmin } from "@/providers/AdminProvider";
 import { addSkill, deleteSkill } from "@/app/actions/skills";
 import { SkillCard } from "./SkillCard";
-import { useRef } from "react";
+import { MediaPicker } from "@/components/ui/MediaPicker";
+import { useRef, useState } from "react";
 
 interface Skill {
   id: string;
@@ -17,6 +18,8 @@ interface Skill {
 export function SkillsContent({ skills }: { skills: Skill[] }) {
   const { isAdmin, isEditing } = useAdmin();
   const formRef = useRef<HTMLFormElement>(null);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [pickedMedia, setPickedMedia] = useState<{ id: string; url: string } | null>(null);
 
   return (
     <>
@@ -66,6 +69,7 @@ export function SkillsContent({ skills }: { skills: Skill[] }) {
           action={async (formData) => {
             await addSkill(formData);
             formRef.current?.reset();
+            setPickedMedia(null);
           }}
           className="mt-6 p-4 border border-dashed border-[var(--accent-primary)]/30 rounded-xl space-y-3"
         >
@@ -80,6 +84,35 @@ export function SkillsContent({ skills }: { skills: Skill[] }) {
             placeholder="Initial notes (optional)"
             className="w-full px-3 py-2 text-sm bg-transparent border border-[var(--foreground-muted)]/20 rounded-lg focus:outline-none focus:border-[var(--accent-primary)]/50"
           />
+
+          {/* Optional photo via MediaPicker */}
+          {pickedMedia ? (
+            <div className="flex items-center gap-2">
+              <img
+                src={pickedMedia.url}
+                alt="Selected"
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => setPickedMedia(null)}
+                className="text-xs text-red-500 hover:text-red-600"
+              >
+                Remove photo
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowMediaPicker(true)}
+              className="px-3 py-2 text-sm bg-transparent border border-dashed border-[var(--foreground-muted)]/20 rounded-lg text-[var(--foreground-muted)] hover:border-[var(--accent-primary)]/30 transition-colors"
+            >
+              Add photo (optional)
+            </button>
+          )}
+          <input type="hidden" name="photoUrl" value={pickedMedia?.url || ""} />
+          <input type="hidden" name="mediaId" value={pickedMedia?.id || ""} />
+
           <button
             type="submit"
             className="px-4 py-2 text-sm font-medium bg-[var(--accent-primary)] text-white rounded-lg hover:opacity-90 transition-opacity"
@@ -87,6 +120,17 @@ export function SkillsContent({ skills }: { skills: Skill[] }) {
             Add Skill
           </button>
         </form>
+      )}
+
+      {/* MediaPicker Modal */}
+      {showMediaPicker && (
+        <MediaPicker
+          onSelect={(media) => {
+            setPickedMedia(media);
+            setShowMediaPicker(false);
+          }}
+          onClose={() => setShowMediaPicker(false)}
+        />
       )}
     </>
   );

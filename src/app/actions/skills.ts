@@ -8,15 +8,30 @@ export async function addSkill(formData: FormData) {
   await requireAdmin();
   const name = formData.get("name") as string;
   const notes = formData.get("notes") as string;
+  const photoUrl = formData.get("photoUrl") as string;
+  const mediaId = formData.get("mediaId") as string;
 
   if (!name) return;
 
+  const skillId = crypto.randomUUID();
+
   await prisma.skill.create({
     data: {
-      id: crypto.randomUUID(),
+      id: skillId,
       name,
       notes: notes || null,
       lastUpdatedAt: new Date(),
+      ...(photoUrl
+        ? {
+            SkillPhoto: {
+              create: {
+                id: crypto.randomUUID(),
+                url: photoUrl,
+                mediaId: mediaId || null,
+              },
+            },
+          }
+        : {}),
     },
   });
   revalidatePath("/");

@@ -22,9 +22,9 @@ let _storage: StorageProvider | null = null;
 
 export function getStorage(): StorageProvider {
   if (!_storage) {
-    // Dynamic import avoided — LocalStorage is lightweight
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { LocalStorage } = require("./storage/local");
-    _storage = new LocalStorage();
+    _storage = new LocalStorage() as StorageProvider;
   }
-  return _storage;
+  return _storage as StorageProvider;
 }

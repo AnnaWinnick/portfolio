@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     // Check for media
     const numMedia = parseInt(params.NumMedia || "0", 10);
     if (numMedia === 0) {
-      return twiml();
+      return twiml("Got it — but no image attached.");
     }
 
     const caption = params.Body?.trim() || undefined;
@@ -80,9 +80,9 @@ export async function POST(request: NextRequest) {
       added++;
     }
 
-    return twiml();
+    return twiml(added > 0 ? `Added ${added} photo${added > 1 ? "s" : ""}.` : "No supported images found.");
   } catch (error) {
     console.error("Twilio webhook error:", error);
-    return twiml();
+    return twiml("Something went wrong.");
   }
 }

@@ -79,6 +79,9 @@ jobs:
             SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
             SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
             SPOTIFY_REFRESH_TOKEN=${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+            TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }}
+            ADMIN_PHONE=${{ secrets.ADMIN_PHONE }}
+            TWILIO_PHONE=${{ secrets.TWILIO_PHONE }}
             ENVEOF
 
             # Secure the env file

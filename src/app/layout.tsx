@@ -34,9 +34,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const devBypass = process.env.NODE_ENV === "development" && process.env.DEV_ADMIN_BYPASS === "true";
-  const session = devBypass ? null : await auth();
-  const isAdmin = devBypass || (session?.user?.isAdmin ?? false);
+  const session = await auth();
+  const isAdmin = session?.user?.isAdmin ?? false;
 
   return (
     <html lang="en">

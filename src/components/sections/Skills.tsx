@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { isOverdue } from "@/lib/utils";
 import { SkillCard } from "./SkillCard";
 
 export async function Skills() {
@@ -7,6 +8,13 @@ export async function Skills() {
     orderBy: { lastUpdatedAt: "desc" },
     take: 4,
   });
+
+  // Check if any skills are overdue for nudge button
+  const reminderSetting = await prisma.setting.findUnique({
+    where: { key: "reminder_days" },
+  });
+  const reminderDays = reminderSetting ? parseInt(reminderSetting.value) : 14;
+  const hasOverdueSkills = skills.some((s) => isOverdue(s.lastUpdatedAt, reminderDays));
 
   return (
     <div>
@@ -39,6 +47,19 @@ export async function Skills() {
             />
           ))}
         </div>
+      )}
+
+      {/* Nudge button - only shows when skills are overdue */}
+      {hasOverdueSkills && (
+        <form action="/api/nudge" method="POST" className="mt-6">
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 rounded-full hover:bg-[var(--accent-primary)]/10 transition-colors"
+          >
+            <span>Nudge Me</span>
+          </button>
+          <span className="ml-2 text-xs text-[var(--foreground-muted)]/60 font-mono">via Resend API</span>
+        </form>
       )}
     </div>
   );

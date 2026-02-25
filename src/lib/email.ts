@@ -29,7 +29,7 @@ export async function sendNudgeEmail() {
       <h2>You've been nudged!</h2>
       <p>Someone noticed you're behind on your skill updates and sent you a friendly nudge.</p>
       <p>Time to make some progress and update your portfolio!</p>
-      <p><a href="${process.env.NEXTAUTH_URL}/admin/skills">Update your skills</a></p>
+      <p><a href="${process.env.NEXTAUTH_URL}/#skills">Update your skills</a></p>
       <hr>
       <p style="color: #666; font-size: 12px;">
         This email was sent from your portfolio site's nudge feature.
@@ -58,7 +58,7 @@ export async function sendReminderEmail(overdueSkills: string[]) {
       <p>The following skills haven't been updated in a while:</p>
       <ul>${skillsList}</ul>
       <p>Take a few minutes to log your progress.</p>
-      <p><a href="${process.env.NEXTAUTH_URL}/admin/skills">Update your skills</a></p>
+      <p><a href="${process.env.NEXTAUTH_URL}/#skills">Update your skills</a></p>
       <hr>
       <p style="color: #666; font-size: 12px;">
         This is an automated reminder from your portfolio site.

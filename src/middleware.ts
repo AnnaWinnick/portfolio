@@ -2,16 +2,20 @@ import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export default auth((req) => {
-  const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
-  const isLoginPage = req.nextUrl.pathname === "/admin/login";
+  const { pathname } = req.nextUrl;
 
   // Allow login page without auth
-  if (isLoginPage) {
+  if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 
-  // Protect admin routes
-  if (isAdminRoute && !req.auth) {
+  // Redirect old admin dashboard to homepage
+  if (pathname === "/admin") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // Protect remaining admin routes (settings)
+  if (pathname.startsWith("/admin") && !req.auth) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 

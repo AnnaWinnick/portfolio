@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter, JetBrains_Mono } from "next/font/google";
 import { SmoothScrollProvider } from "@/providers/SmoothScrollProvider";
+import { AdminProvider } from "@/providers/AdminProvider";
+import { AdminBar } from "@/components/ui/AdminBar";
+import { auth } from "@/lib/auth";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -26,11 +29,15 @@ export const metadata: Metadata = {
   description: "Portfolio of a creative platform engineer who paints, crochets, and ships infrastructure.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const devBypass = process.env.NODE_ENV === "development" && process.env.DEV_ADMIN_BYPASS === "true";
+  const session = devBypass ? null : await auth();
+  const isAdmin = devBypass || (session?.user?.isAdmin ?? false);
+
   return (
     <html lang="en">
       <body
@@ -43,9 +50,12 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <SmoothScrollProvider>
-          {children}
-        </SmoothScrollProvider>
+        <AdminProvider isAdmin={isAdmin}>
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
+          <AdminBar />
+        </AdminProvider>
       </body>
     </html>
   );

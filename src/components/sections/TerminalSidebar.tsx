@@ -1,22 +1,9 @@
 import { getTopTrack } from "@/lib/spotify";
 import { getRecentCommits } from "@/lib/github";
-import prisma from "@/lib/prisma";
-import { isOverdue } from "@/lib/utils";
 
 export async function TerminalSidebar() {
   const topTrack = await getTopTrack();
   const commits = await getRecentCommits("annawinnick", 3);
-
-  // Check if any skills are overdue
-  const reminderSetting = await prisma.setting.findUnique({
-    where: { key: "reminder_days" },
-  });
-  const reminderDays = reminderSetting ? parseInt(reminderSetting.value) : 14;
-
-  const skills = await prisma.skill.findMany({
-    select: { lastUpdatedAt: true },
-  });
-  const hasOverdueSkills = skills.some((s) => isOverdue(s.lastUpdatedAt, reminderDays));
 
   return (
     <aside className="space-y-6">
@@ -98,29 +85,6 @@ export async function TerminalSidebar() {
         <p className="text-xs text-[var(--foreground-dark-muted)]/60 mt-3 font-mono">via GitHub API</p>
       </div>
 
-      {/* Nudge Button - only shows when skills are overdue */}
-      {hasOverdueSkills && <NudgeButton />}
     </aside>
-  );
-}
-
-function NudgeButton() {
-  return (
-    <div className="glass-light p-5 space-y-3">
-      <p className="text-sm text-[var(--foreground-muted)]">
-        Looks like I&apos;m behind on my skill updates. Give me a nudge?
-      </p>
-      <form action="/api/nudge" method="POST">
-        <button
-          type="submit"
-          className="w-full py-3 bg-[var(--accent-primary)] text-white rounded-lg font-medium hover-lift hover-glow"
-        >
-          Send Nudge
-        </button>
-      </form>
-      <p className="text-xs text-[var(--foreground-muted)]/60 font-mono text-center">
-        via Resend API
-      </p>
-    </div>
   );
 }

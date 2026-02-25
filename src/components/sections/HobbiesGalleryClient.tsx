@@ -2,6 +2,9 @@
 
 import { useRef, useEffect, useState } from "react";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
+import { useAdmin } from "@/providers/AdminProvider";
+import { addHobbyImage, deleteHobbyImage, moveHobbyImage } from "@/app/actions/hobbies";
+import { MediaPicker } from "@/components/ui/MediaPicker";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -21,7 +24,11 @@ interface HobbiesGalleryClientProps {
 export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
   const { containerRef, wrapperRef } = useHorizontalScroll<HTMLDivElement>();
   const titleRef = useRef<HTMLDivElement>(null);
+  const addFormRef = useRef<HTMLFormElement>(null);
   const [selectedImage, setSelectedImage] = useState<HobbyImage | null>(null);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [pickedMedia, setPickedMedia] = useState<{ id: string; url: string } | null>(null);
+  const { isAdmin, isEditing } = useAdmin();
 
   useEffect(() => {
     if (!titleRef.current) return;
@@ -108,12 +115,112 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
                   )}
                 </div>
               </div>
+
+              {/* Admin edit controls */}
+              {isAdmin && isEditing && (
+                <div
+                  className="absolute top-2 right-2 flex gap-1 z-10"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {i > 0 && (
+                    <form action={moveHobbyImage}>
+                      <input type="hidden" name="id" value={img.id} />
+                      <input type="hidden" name="direction" value="up" />
+                      <button
+                        type="submit"
+                        className="w-7 h-7 flex items-center justify-center bg-black/60 hover:bg-black/80 text-white rounded text-xs transition-colors"
+                      >
+                        &larr;
+                      </button>
+                    </form>
+                  )}
+                  {i < images.length - 1 && (
+                    <form action={moveHobbyImage}>
+                      <input type="hidden" name="id" value={img.id} />
+                      <input type="hidden" name="direction" value="down" />
+                      <button
+                        type="submit"
+                        className="w-7 h-7 flex items-center justify-center bg-black/60 hover:bg-black/80 text-white rounded text-xs transition-colors"
+                      >
+                        &rarr;
+                      </button>
+                    </form>
+                  )}
+                  <form action={deleteHobbyImage}>
+                    <input type="hidden" name="id" value={img.id} />
+                    <button
+                      type="submit"
+                      className="w-7 h-7 flex items-center justify-center bg-red-600/80 hover:bg-red-600 text-white rounded text-xs transition-colors"
+                    >
+                      &times;
+                    </button>
+                  </form>
+                </div>
+              )}
               {/* Index number */}
               <span className="absolute top-3 right-3 font-mono text-2xl sm:text-3xl text-white/20 pointer-events-none group-hover:text-white/40 transition-colors">
                 {String(i + 1).padStart(2, "0")}
               </span>
             </button>
           ))}
+
+          {/* Add image card — only in edit mode */}
+          {isAdmin && isEditing && (
+            <form
+              ref={addFormRef}
+              action={async (formData) => {
+                await addHobbyImage(formData);
+                addFormRef.current?.reset();
+                setPickedMedia(null);
+              }}
+              className="flex-shrink-0 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-white/20 rounded-xl p-6"
+              style={{
+                width: "clamp(200px, 40vw, 400px)",
+                height: "clamp(150px, 35vh, 350px)",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Image selection via MediaPicker */}
+              {pickedMedia ? (
+                <div className="w-full flex items-center gap-2">
+                  <img
+                    src={pickedMedia.url}
+                    alt="Selected"
+                    className="w-16 h-16 rounded-lg object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPickedMedia(null)}
+                    className="text-xs text-red-400 hover:text-red-300"
+                  >
+                    Clear
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowMediaPicker(true)}
+                  className="w-full px-3 py-2 text-sm bg-white/10 border border-white/20 rounded-lg text-[var(--foreground-muted)] hover:bg-white/15 transition-colors"
+                >
+                  Choose Image...
+                </button>
+              )}
+              <input type="hidden" name="url" value={pickedMedia?.url || ""} />
+              <input type="hidden" name="mediaId" value={pickedMedia?.id || ""} />
+              <input
+                name="caption"
+                placeholder="Caption (optional)"
+                className="w-full px-3 py-2 text-sm bg-white/10 border border-white/20 rounded-lg text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:outline-none focus:border-white/40"
+              />
+              <button
+                type="submit"
+                disabled={!pickedMedia}
+                className="px-4 py-2 text-sm font-medium bg-white/20 hover:bg-white/30 text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-40"
+              >
+                Add Image
+              </button>
+            </form>
+          )}
         </div>
 
         {/* Scroll indicator */}
@@ -124,6 +231,17 @@ export function HobbiesGalleryClient({ images }: HobbiesGalleryClientProps) {
           </svg>
         </div>
       </section>
+
+      {/* MediaPicker Modal */}
+      {showMediaPicker && (
+        <MediaPicker
+          onSelect={(media) => {
+            setPickedMedia(media);
+            setShowMediaPicker(false);
+          }}
+          onClose={() => setShowMediaPicker(false)}
+        />
+      )}
 
       {/* Lightbox Modal */}
       {selectedImage && (

@@ -25,14 +25,12 @@ export function IdeasContent({ ideas }: { ideas: Idea[] }) {
           <p className="text-[var(--foreground-muted)]">Ideas brewing...</p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {ideas.map((idea, index) => (
+        <div className="space-y-3">
+          {ideas.map((idea) => (
             <div key={idea.id} className="group/edit relative">
               <IdeaCard
                 title={idea.title}
-                description={idea.description}
                 createdAt={idea.createdAt}
-                index={index}
               />
 
               {/* Edit controls overlay */}

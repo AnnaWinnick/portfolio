@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { addIdea, toggleArchiveIdea, deleteIdea } from "@/app/actions/ideas";
 
 export default async function IdeasAdmin() {
   const session = await auth();
@@ -10,45 +10,6 @@ export default async function IdeasAdmin() {
   const ideas = await prisma.idea.findMany({
     orderBy: { createdAt: "desc" },
   });
-
-  async function addIdea(formData: FormData) {
-    "use server";
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-
-    if (!title) return;
-
-    await prisma.idea.create({
-      data: { id: crypto.randomUUID(), title, description: description || null, updatedAt: new Date() },
-    });
-    revalidatePath("/admin/ideas");
-    revalidatePath("/");
-  }
-
-  async function toggleArchive(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    const currentlyArchived = formData.get("archived") === "true";
-
-    if (!id) return;
-
-    await prisma.idea.update({
-      where: { id },
-      data: { isArchived: !currentlyArchived },
-    });
-    revalidatePath("/admin/ideas");
-    revalidatePath("/");
-  }
-
-  async function deleteIdea(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    if (!id) return;
-
-    await prisma.idea.delete({ where: { id } });
-    revalidatePath("/admin/ideas");
-    revalidatePath("/");
-  }
 
   const activeIdeas = ideas.filter((i) => !i.isArchived);
   const archivedIdeas = ideas.filter((i) => i.isArchived);
@@ -61,7 +22,7 @@ export default async function IdeasAdmin() {
             href="/admin"
             className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
           >
-            ← Back to Dashboard
+            &larr; Back to Dashboard
           </a>
           <h1 className="mt-4">Ideas</h1>
           <p className="text-[var(--foreground-muted)]">
@@ -114,7 +75,7 @@ export default async function IdeasAdmin() {
                       )}
                     </div>
                     <div className="flex gap-2">
-                      <form action={toggleArchive}>
+                      <form action={toggleArchiveIdea}>
                         <input type="hidden" name="id" value={idea.id} />
                         <input type="hidden" name="archived" value="false" />
                         <button
@@ -154,7 +115,7 @@ export default async function IdeasAdmin() {
                   className="p-3 border border-[var(--foreground-muted)]/10 rounded flex items-center justify-between"
                 >
                   <span className="line-through">{idea.title}</span>
-                  <form action={toggleArchive}>
+                  <form action={toggleArchiveIdea}>
                     <input type="hidden" name="id" value={idea.id} />
                     <input type="hidden" name="archived" value="true" />
                     <button

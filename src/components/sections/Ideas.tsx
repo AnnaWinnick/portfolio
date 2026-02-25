@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { IdeaCard } from "./IdeaCard";
+import { IdeasContent } from "./IdeasContent";
 
 export async function Ideas() {
   const ideas = await prisma.idea.findMany({
@@ -18,24 +18,7 @@ export async function Ideas() {
         <h2 className="display-sm text-[var(--foreground)]">Ideas</h2>
       </div>
 
-      {/* Ideas list */}
-      {ideas.length === 0 ? (
-        <div className="bg-[var(--color-pale-blue)]/50 rounded-xl p-8 text-center">
-          <p className="text-[var(--foreground-muted)]">Ideas brewing...</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {ideas.map((idea, index) => (
-            <IdeaCard
-              key={idea.id}
-              title={idea.title}
-              description={idea.description}
-              createdAt={idea.createdAt}
-              index={index}
-            />
-          ))}
-        </div>
-      )}
+      <IdeasContent ideas={ideas} />
     </div>
   );
 }

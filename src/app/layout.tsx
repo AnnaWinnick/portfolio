@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Anna Winnick | Creative DevOps Engineer",
-  description: "Portfolio of a creative DevOps engineer who paints, crochets, and ships infrastructure.",
+  title: "Anna Winnick | Creative Platform Engineer",
+  description: "Portfolio of a creative platform engineer who paints, crochets, and ships infrastructure.",
 };
 
 export default function RootLayout({

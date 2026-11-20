@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:v2.11
+    image: traefik:v2.11.63
     command:
       - "--api.dashboard=false"
       - "--providers.docker=true"
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   db:
-    image: postgres:16-alpine
+    image: postgres:16.16-alpine
     environment:
       - POSTGRES_USER=portfolio
       - POSTGRES_PASSWORD=${DB_PASSWORD}

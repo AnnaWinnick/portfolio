@@ -2,10 +2,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/admin";
 
 export default async function SettingsAdmin() {
   const session = await auth();
-  if (!session?.user) redirect("/admin/login");
+  if (!session?.user?.isAdmin) redirect("/admin/login");
 
   const reminderSetting = await prisma.setting.findUnique({
     where: { key: "reminder_days" },
@@ -14,6 +15,7 @@ export default async function SettingsAdmin() {
 
   async function updateSettings(formData: FormData) {
     "use server";
+    await requireAdmin();
     const reminderDays = formData.get("reminder_days") as string;
 
     if (reminderDays) {

@@ -1,10 +1,14 @@
-FROM node:20-alpine AS base
+FROM node:24.22.3-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
+
+# Keep the migration CLI and its dependencies identical to package-lock.json.
+FROM deps AS production-deps
+RUN npm prune --omit=dev --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -35,14 +39,13 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+COPY --from=production-deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-
-# Install only prisma CLI for migrations
-RUN npm install prisma@7.3.0
 
 USER nextjs
 

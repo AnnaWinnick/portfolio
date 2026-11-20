@@ -1,0 +1,125 @@
+{
+  "verified_on": "2026-11-20",
+  "scope": "Repository-defined deployment and isolated local tests; production inventory remains unverified",
+  "facts": [
+    {
+      "fact": "The application uses Next.js App Router and Server Actions on Node.js, with Prisma/PostgreSQL.",
+      "evidence": [
+        "package.json",
+        "src/app/page.tsx",
+        "src/app/actions/ideas.ts",
+        "prisma/schema.prisma"
+      ],
+      "verified_on": [
+        "2026-11-04",
+        "2026-11-20"
+      ],
+      "recheck_when": [
+        "Application architecture or dependency manifests change"
+      ]
+    },
+    {
+      "fact": "Compose routes HTTP/HTTPS through Traefik and declares no nginx, JVM, PHP, or Ruby service.",
+      "evidence": [
+        "Dockerfile",
+        "docker-compose.yml"
+      ],
+      "verified_on": [
+        "2026-11-04",
+        "2026-11-20"
+      ],
+      "recheck_when": [
+        "Compose, Dockerfile, base images, origin routing, or extra host services change"
+      ],
+      "limit": "Does not establish which services run on the live host."
+    },
+    {
+      "fact": "Admin mutations use requireAdmin; the settings action independently checks authorization before writing.",
+      "evidence": [
+        "src/lib/admin.ts",
+        "src/app/actions/ideas.ts",
+        "src/app/admin/settings/page.tsx",
+        "tests/admin-authorization.test.tsx"
+      ],
+      "verified_on": [
+        "2026-11-20"
+      ],
+      "recheck_when": [
+        "Auth.js callbacks, middleware, Server Actions, or session types change"
+      ]
+    },
+    {
+      "fact": "Node 24 is supported by Prisma 7 and the rebuilt Alpine image ran Prisma 7.10.1 schema validation and db push successfully.",
+      "evidence": [
+        "https://www.prisma.io/docs/orm/v7/reference/system-requirements",
+        "Dockerfile",
+        "package-lock.json"
+      ],
+      "verified_on": [
+        "2026-11-20"
+      ],
+      "recheck_when": [
+        "Node/Prisma major changes",
+        "Alpine/native-engine changes",
+        "CLI or config dependency changes"
+      ]
+    },
+    {
+      "fact": "Prisma config pins an affected Effect version; this revision overrides it to patched 3.22.1.",
+      "evidence": [
+        "package.json",
+        "package-lock.json",
+        "https://github.com/Effect-TS/effect/security/advisories/GHSA-7589-6fvf-x4pw"
+      ],
+      "verified_on": [
+        "2026-11-20"
+      ],
+      "recheck_when": [
+        "Prisma updates its dependency",
+        "Effect publishes another advisory"
+      ],
+      "maintenance": "Remove the scoped override once Prisma resolves a patched compatible Effect version itself."
+    }
+  ],
+  "verification_snapshot": {
+    "date": "2026-11-20",
+    "node": "24.22.3",
+    "next": "16.4.6",
+    "next_auth": "5.0.0-beta.32",
+    "prisma": "7.10.1",
+    "sharp": "0.35.5",
+    "traefik": "2.11.63",
+    "postgresql": "16.16",
+    "results": [
+      "12 authorization tests passed",
+      "TypeScript check passed after Prisma generation",
+      "Production Alpine Docker build passed",
+      "Non-root Prisma validate and db push passed against disposable PostgreSQL",
+      "Homepage/login/session returned 200; anonymous settings redirected; anonymous upload returned 401"
+    ],
+    "limits": [
+      "npm audit is time-sensitive, not a permanent absence-of-vulnerabilities fact",
+      "Local Docker test used linux/arm64; deployment architecture is not inventoried",
+      "Live OAuth login, certificate renewal, and production data were not tested",
+      "Five existing lint errors remain in unchanged animation/media components"
+    ],
+    "recheck_when": [
+      "Before merge/deploy",
+      "New advisory",
+      "Dependency or image update",
+      "Production inventory contradicts configuration"
+    ]
+  },
+  "follow_up": [
+    "Inventory running production versions and scan image/host packages",
+    "Migrate Traefik v2 to a supported release line",
+    "Fix existing full-repository lint failures"
+  ],
+  "sources": [
+    "https://nodejs.org/en/blog/vulnerability/november-2026-security-releases/",
+    "https://github.com/vercel/next.js/security/advisories/GHSA-p3m5-59mp-jv5r",
+    "https://github.com/nextauthjs/next-auth/security/advisories/GHSA-8fpg-xm3f-6cx3",
+    "https://github.com/traefik/traefik/releases/tag/v2.11.63",
+    "https://www.postgresql.org/about/news/postgresql-187-1712-1616-1520-1425-and-19-rc-2-released-3442/"
+  ]
+}
